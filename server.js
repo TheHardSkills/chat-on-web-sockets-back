@@ -1,4 +1,3 @@
-//server
 const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: 5000 });
@@ -9,7 +8,7 @@ wss.on("connection", (ws) => {
   ws.on("message", (data) => {
     console.log(`Client has sent us: ${data}`);
 
-    ws.send(data.toUpperCase());
+    ws.send(data);
     // todo: record to db + send to client (reading data from the database)
   });
 
