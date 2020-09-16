@@ -1,0 +1,9 @@
+#allMessageBlock {
+  border: 2px solid green;
+  padding-bottom: 10px;
+}
+
+#correspondenceBlock {
+  margin-top: 10px;
+  border: 1px solid orange;
+}

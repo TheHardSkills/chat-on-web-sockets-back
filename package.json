@@ -1,0 +1,28 @@
+{
+  "name": "chat-on-web-sockets-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheHardSkills/chat-on-web-sockets-back.git"
+  },
+  "author": "Yuliia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheHardSkills/chat-on-web-sockets-back/issues"
+  },
+  "homepage": "https://github.com/TheHardSkills/chat-on-web-sockets-back#readme",
+  "dependencies": {
+    "ejs": "^3.1.5",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.4",
+    "socket.io": "^2.3.0",
+    "websocket": "^1.0.32",
+    "ws": "^7.3.1"
+  }
+}
