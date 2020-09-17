@@ -9,7 +9,28 @@ class MongoDbDataProcessing {
   }
 
   dataBaseCreator() {}
-  userCreator() {}
+  userCreator(data) {
+    this.mongoClient.connect(function (err, client) {
+      // "adminStatus" must be true or false
+      let userInfo = {
+        username: data.username,
+        password: data.password,
+        userToken: data.userToken,
+        adminStatus: data.adminStatus,
+      };
+
+      const db = client.db("chatbd_draft_version"); // todo: move to constructor
+      const collection = db.collection("users");
+
+      collection.insertOne(userInfo, function (err, result) {
+        if (err) {
+          return console.log(err);
+        }
+        console.log(result.ops);
+        client.close();
+      });
+    });
+  }
 
   messageCreator(objectWithMessageInfo) {
     this.mongoClient.connect(function (err, client) {
@@ -52,6 +73,7 @@ class MongoDbDataProcessing {
           return resolve(docs);
         });
     });
+    // todo: close connection
     const allMessages = await result;
     return allMessages;
   }

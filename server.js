@@ -28,7 +28,7 @@ wss.on("connection", (ws) => {
     console.log("allClientMessages");
     console.log(allClientMessages);
 
-    ws.send(data); // why in conlole??? - data is sent to the client
+    ws.send(data); // why in conlole??? - data is sent to the client - addEventListener("message")
     // todo: record to db + send to client (reading data from the database)
   });
 
