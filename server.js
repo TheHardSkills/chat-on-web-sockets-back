@@ -2,18 +2,25 @@ const mongoDbDataProcessing = require("./data-processing");
 const autorizationPart = require("./authorization-part");
 const WebSocket = require("ws");
 const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
+const urlencodedParser = bodyParser.urlencoded({ extended: false });
 
-app.post("/login", function (request, response) {
-  let userInfo = {
-    username: request.username,
-    password: request.password,
-  };
+app.post("/login", urlencodedParser, function (request, response) {
+  console.log("request**************");
+  //let requestBodyInObj = JSON.parse(request.body)
+  console.log(request.body);
+  // let userInfo = {
+  //   username: request.username,
+  //   password: request.password,
+  //   userToken: request.userToken,
+  //   adminStatus: request.adminStatus,
+  // };
   // todo: "userInfo" write to db + check enter data (validation)
   response.send("done");
 });
 
-app.listen(3000);
+app.listen(7000);
 
 ///////////////////////////////////////////
 //WebSocket logic:

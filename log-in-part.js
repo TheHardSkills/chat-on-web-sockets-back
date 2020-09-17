@@ -44,11 +44,10 @@ class LogInPart {
     // на момент регистрации сокет-соединения еще нет
     // =>
     // http-запрос на сервер (post):
-    const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    let response = await fetch("http://localhost:3000/login", {
+    await fetch("http://localhost:7000/login", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        "Content-Type": "application/x-www-form-urlencoded",
       },
       body: JSON.stringify(objectWithUserData),
     });
