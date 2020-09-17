@@ -2,26 +2,27 @@ class MongoDbDataProcessing {
   constructor() {
     this.MongoClient = require("mongodb").MongoClient;
     this.url = "mongodb://localhost:27017/";
-    this.mongoClient = new MongoClient(url, { useNewUrlParser: true });
+    this.mongoClient = new this.MongoClient(this.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
   }
 
   dataBaseCreator() {}
   userCreator() {}
 
-  messageCreator() {
-    mongoClient.connect(function (err, client) {
-      // todo: read data from client
-      let message = "Some message";
-      let senderToken = 1;
-      let recipientToken = 2;
-      let departureTime = "16.09.2020 17:26"; //todo: new Date()
+  messageCreator(objectWithMessageInfo) {
+    this.mongoClient.connect(function (err, client) {
+      let message = objectWithMessageInfo.message;
+      let senderToken = objectWithMessageInfo.senderToken;
+      let departureTime = objectWithMessageInfo.departureTime;
+
       const db = client.db("chatbd_draft_version"); // todo: move to constructor
       const collection = db.collection("messages");
 
       let messageInfo = {
         message: message,
         senderToken: senderToken,
-        recipientToken: recipientToken,
         departureTime: departureTime,
       };
 
@@ -35,18 +36,28 @@ class MongoDbDataProcessing {
     });
   }
 
-  messagesFounder() {
-    mongoClient.connect(function (err, client) {
-      const db = client.db("chatbd_draft_version"); // todo: move to constructor
-      const collection = db.collection("messages");
-
-      collection.find().toArray(function (err, results) {
-        console.log(results);
-        client.close();
-      });
+  async messagesFounder() {
+    var connect = await this.MongoClient.connect(this.url, {
+      useUnifiedTopology: true,
     });
+
+    const db = connect.db("chatbd_draft_version");
+    let result = new Promise(function (resolve, reject) {
+      db.collection("messages")
+        .find()
+        .toArray(function (err, docs) {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(docs);
+        });
+    });
+    const allMessages = await result;
+    return allMessages;
   }
 
   activeUsersFounder() {}
   getAllUsers() {}
 }
+
+module.exports = MongoDbDataProcessing;

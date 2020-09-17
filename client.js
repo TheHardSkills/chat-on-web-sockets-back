@@ -38,21 +38,20 @@ const getData = (date) => {
   let yy = date.getFullYear() % 100;
   if (yy < 10) yy = "0" + yy;
 
-  // todo: hh and min include to returned object
   const hh = date.getHours();
   const min = date.getMinutes();
 
-  return dd + "." + mm + "." + yy;
+  return dd + "." + mm + "." + yy + " " + hh + ":" + min;
 };
 
 const messageInformationGenerator = (messageText) => {
   const currentDate = new Date();
   const messageData = getData(currentDate);
 
+  // todo: senderToken field will be dinamic
   let objectWithMessageInfo = {
     message: messageText,
     senderToken: 1,
-    recipientToken: 2,
     departureTime: messageData,
   };
 
@@ -68,8 +67,9 @@ var sendDataFunc = () => {
   console.log("messageInfo");
   console.log(messageInfo);
 
-  // sending data to the server for writing to the db !
-  ws.send(messageInfo); //todo: process the object in the format required for sending to the server
+  // sending data to the server for writing to the db
+  const messageInfoInString = JSON.stringify(messageInfo);
+  ws.send(messageInfoInString); //todo: process the object in the format required for sending to the server
   let correspondenceBlock = buildingBlockWithMessages();
   correspondenceBlock.innerText = messageFromClient;
 };
