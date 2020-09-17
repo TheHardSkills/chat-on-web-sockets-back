@@ -1,5 +1,4 @@
 class LogInPart {
-  constructor() {}
   logInFormBuilder() {
     let loginForm = document.getElementById("loginForm");
     let formContainer = document.createElement("form");
@@ -18,28 +17,41 @@ class LogInPart {
     formContainer.append(passwordField);
     formContainer.append(logInSendButton);
   }
-  formingDataForServer() {
+  async formingDataForServer() {
     /*
-    НА СЕРВЕРЕ:
+    *НА СЕРВЕРЕ:
      *берутся данные у полей,
      *формируются в объект,
      *передаются в бд на запись
   
-     НА КЛИЕНТЕ:
-     данные могут только идти на сервер, 
-     без обработки
+     *НА КЛИЕНТЕ:
+     *данные могут только идти на сервер, 
+     *без обработки
      */
 
     let username = document.getElementById("usernameField").value;
     let password = document.getElementById("passwordField").value;
-    let userToken = "";
-    let adminStatus = "";
+    let userToken = ""; // todo: some tokenGenerator
+    let adminStatus = ""; // todo: input for reading adminStatus (true / false)
 
-    const objectWithClientData = {
+    const objectWithUserData = {
       username: username,
       password: password,
       userToken: userToken,
       adminStatus: adminStatus,
     };
+
+    // на момент регистрации сокет-соединения еще нет
+    // =>
+    // http-запрос на сервер (post):
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    let response = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(objectWithUserData),
+    });
+    //let result = await response.json();
   }
 }

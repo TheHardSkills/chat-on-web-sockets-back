@@ -1,7 +1,29 @@
 const mongoDbDataProcessing = require("./data-processing");
+const autorizationPart = require("./authorization-part");
 const WebSocket = require("ws");
+const express = require("express");
+const app = express();
+
+app.post("/login", function (request, response) {
+  let userInfo = {
+    username: request.username,
+    password: request.password,
+  };
+  // todo: "userInfo" write to db + check enter data (validation)
+  response.send("done");
+});
+
+app.listen(3000);
+
+///////////////////////////////////////////
+//WebSocket logic:
+///////////////////////////////////////////
 
 const wss = new WebSocket.Server({ port: 5000 });
+
+//call class from authorization-part
+const autorization = new autorizationPart();
+//autorization.writingUserDataToDb(data)
 
 const writingClientMessageToDb = (dataInString) => {
   const objectWithClientData = JSON.parse(dataInString);
@@ -21,14 +43,12 @@ wss.on("connection", (ws) => {
 
   ws.on("message", async (data) => {
     console.log(`Client has sent us: ${data}`);
-    //func with parse str and write to db
-    writingClientMessageToDb(data);
+    writingClientMessageToDb(data); //func with parse str and write to db
     const allClientMessages = await findingClientMessageToDb(); // is a function needed for this primitive action?
+    // console.log("allClientMessages");
+    // console.log(allClientMessages);
 
-    console.log("allClientMessages");
-    console.log(allClientMessages);
-
-    ws.send(data); // why in conlole??? - data is sent to the client - addEventListener("message")
+    ws.send(data); // data is sent to the client - addEventListener("message")
     // todo: record to db + send to client (reading data from the database)
   });
 

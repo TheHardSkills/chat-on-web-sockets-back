@@ -1,6 +1,5 @@
 class ChatModule {
-  constructor() {}
-  messageFormBuilder() {
+  messageFormBuilder(ws) {
     const mainConteiner = document.getElementById("mainConteiner");
     const form = document.createElement("form");
     const inputWithMessageFromClient = document.createElement("input");
@@ -65,7 +64,7 @@ class ChatModule {
     console.log("messageInfo");
     console.log(messageInfo);
 
-    // sending data to the server for writing to the db
+    // sending data to the server for writing to the db:
     const messageInfoInString = JSON.stringify(messageInfo);
     ws.send(messageInfoInString); //todo: process the object in the format required for sending to the server
     let correspondenceBlock = this.buildingBlockWithMessages();

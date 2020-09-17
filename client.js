@@ -3,6 +3,7 @@ ws.addEventListener("open", () => {
   console.log("We are connected!");
 });
 ws.addEventListener("message", ({ data }) => {
+  console.log("dataaaaa");
   console.log(data);
 });
 
