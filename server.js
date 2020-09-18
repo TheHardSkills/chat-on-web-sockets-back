@@ -2,35 +2,70 @@ const mongoDbDataProcessing = require("./data-processing");
 const autorizationPart = require("./authorization-part");
 const WebSocket = require("ws");
 const express = require("express");
-const bodyParser = require("body-parser");
-const app = express();
-const urlencodedParser = bodyParser.urlencoded({ extended: false });
+const cors = require("cors");
 
-app.post("/login", urlencodedParser, function (request, response) {
-  console.log("request**************");
-  //let requestBodyInObj = JSON.parse(request.body)
-  console.log(request.body);
-  // let userInfo = {
-  //   username: request.username,
-  //   password: request.password,
-  //   userToken: request.userToken,
-  //   adminStatus: request.adminStatus,
-  // };
+const app = express();
+
+app.use(cors());
+app.use(express.urlencoded({ extended: true }));
+
+app.post("/login", function (request, response) {
+  let userInfoObject = badFunctionForHandlingInvalidObject(request.body);
+
+  // console.log("userInfoObject");
+  // console.log(userInfoObject);
+
+  let userInfo = {
+    username: userInfoObject.username,
+    password: userInfoObject.password,
+    userToken: userInfoObject.userToken,
+    adminStatus: userInfoObject.adminStatus,
+  };
+
   // todo: "userInfo" write to db + check enter data (validation)
+  const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+  dataProcessing.userCreator(userInfo);
+
+  // todo: move to needed place
+  const findingSllUsersInDb = async () => {
+    const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+    const allUsersInChat = await dataProcessing.getAllUsers();
+    // console.log("allUsersInChat");
+    // console.log(allUsersInChat);
+    return allUsersInChat;
+  };
+  findingSllUsersInDb();
+
+  // todo: move to needed place
+  const findUser = async () => {
+    const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+    const oneUserData = await dataProcessing.getOneUserInfo("Some");
+    // console.log("oneUserData");
+    // console.log(oneUserData);
+    return oneUserData;
+  };
+  findUser();
+
   response.send("done");
 });
 
 app.listen(7000);
 
-///////////////////////////////////////////
-//WebSocket logic:
-///////////////////////////////////////////
+var badFunctionForHandlingInvalidObject = (obj) => {
+  let keysArray = Object.keys(obj);
+  let resultObject = JSON.parse(keysArray);
+  return resultObject;
+};
+
+/*
+ * WebSocket logic:
+ */
 
 const wss = new WebSocket.Server({ port: 5000 });
 
-//call class from authorization-part
+//call class from authorization-part:
 const autorization = new autorizationPart();
-//autorization.writingUserDataToDb(data)
+//autorization.writingUserDataToDb(data);
 
 const writingClientMessageToDb = (dataInString) => {
   const objectWithClientData = JSON.parse(dataInString);

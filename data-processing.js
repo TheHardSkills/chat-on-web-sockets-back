@@ -79,7 +79,47 @@ class MongoDbDataProcessing {
   }
 
   activeUsersFounder() {}
-  getAllUsers() {}
+  async getAllUsers() {
+    var connect = await this.MongoClient.connect(this.url, {
+      useUnifiedTopology: true,
+    });
+
+    const db = connect.db("chatbd_draft_version");
+    let result = new Promise(function (resolve, reject) {
+      db.collection("users")
+        .find()
+        .toArray(function (err, docs) {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(docs);
+        });
+    });
+    // todo: close connection
+    const allUsers = await result;
+    return allUsers;
+  }
+
+  async getOneUserInfo(usernameSearchedUser) {
+    var connect = await this.MongoClient.connect(this.url, {
+      useUnifiedTopology: true,
+    });
+    const db = connect.db("chatbd_draft_version");
+    let result = new Promise(function (resolve, reject) {
+      db.collection("users").findOne({ username: "Some" }, function (
+        err,
+        docs
+      ) {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(docs);
+      });
+    });
+    // todo: close connection
+    const oneUserInfo = await result;
+    return oneUserInfo;
+  }
 }
 
 module.exports = MongoDbDataProcessing;

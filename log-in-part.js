@@ -1,37 +1,31 @@
 class LogInPart {
   logInFormBuilder() {
-    let loginForm = document.getElementById("loginForm");
-    let formContainer = document.createElement("form");
-    formContainer.id = "formContainer";
+    let loginFormContainer = document.getElementById("loginForm");
+    let formLogIn = document.createElement("form");
+    formLogIn.id = "formLogIn";
+
     let usernameField = document.createElement("input");
     usernameField.id = "usernameField";
+    usernameField.placeholder = "username";
 
     let passwordField = document.createElement("input");
     passwordField.id = "passwordField";
+    passwordField.placeholder = "password";
+
     let logInSendButton = document.createElement("input");
     logInSendButton.value = "Log in";
+    logInSendButton.className = "button";
     logInSendButton.onclick = this.formingDataForServer;
 
-    loginForm.append(formContainer);
-    formContainer.append(usernameField);
-    formContainer.append(passwordField);
-    formContainer.append(logInSendButton);
+    loginFormContainer.append(formLogIn);
+    formLogIn.append(usernameField);
+    formLogIn.append(passwordField);
+    formLogIn.append(logInSendButton);
   }
   async formingDataForServer() {
-    /*
-    *НА СЕРВЕРЕ:
-     *берутся данные у полей,
-     *формируются в объект,
-     *передаются в бд на запись
-  
-     *НА КЛИЕНТЕ:
-     *данные могут только идти на сервер, 
-     *без обработки
-     */
-
     let username = document.getElementById("usernameField").value;
     let password = document.getElementById("passwordField").value;
-    let userToken = ""; // todo: some tokenGenerator
+    let userToken = ""; // todo: some tokenGenerator, mb '_id' field
     let adminStatus = ""; // todo: input for reading adminStatus (true / false)
 
     const objectWithUserData = {
@@ -41,9 +35,6 @@ class LogInPart {
       adminStatus: adminStatus,
     };
 
-    // на момент регистрации сокет-соединения еще нет
-    // =>
-    // http-запрос на сервер (post):
     await fetch("http://localhost:7000/login", {
       method: "POST",
       headers: {
@@ -51,6 +42,5 @@ class LogInPart {
       },
       body: JSON.stringify(objectWithUserData),
     });
-    //let result = await response.json();
   }
 }

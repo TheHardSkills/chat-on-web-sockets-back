@@ -1,14 +1,40 @@
-#allMessageBlock {
-  border: 2px solid green;
-  padding-bottom: 10px;
+@import url("https://fonts.googleapis.com/css2?family=Orbitron&display=swap");
+
+body {
+  background-color: #202020;
+  font-family: "Orbitron", sans-serif;
+}
+input {
+  text-align: center;
+  font-family: "Orbitron", sans-serif;
+  border-radius: 50px;
+  padding: 10px;
 }
 
-#correspondenceBlock {
-  margin-top: 10px;
-  border: 1px solid orange;
+input.button {
+  background-color: #b0c4de;
 }
 
-#formContainer {
+#formLogIn {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+#allMessageBlock {
+  margin-top: 20px;
+  padding-left: 30px;
+  border: 1px solid green;
+  padding-bottom: 10px;
+  border-radius: 20px;
+}
+
+.correspondenceBlock {
+  font-family: "Orbitron", sans-serif;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #b0c4de;
+  width: 75%;
+  color: #202020;
+  border-radius: 20px;
+  padding-left: 40px;
 }

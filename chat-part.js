@@ -2,10 +2,12 @@ class ChatModule {
   messageFormBuilder(ws) {
     const mainConteiner = document.getElementById("mainConteiner");
     const form = document.createElement("form");
+    form.id = "formForMessageCreate";
     const inputWithMessageFromClient = document.createElement("input");
     const sendButton = document.createElement("input");
     inputWithMessageFromClient.id = "inputWithMessageFromClient";
     sendButton.value = "Send message";
+    sendButton.className = "button";
     sendButton.onclick = () => {
       this.sendDataFunc(ws);
     };
@@ -37,7 +39,7 @@ class ChatModule {
       mainConteiner.append(allMessageBlock);
     }
     const correspondenceBlock = document.createElement("div");
-    correspondenceBlock.id = "correspondenceBlock";
+    correspondenceBlock.className = "correspondenceBlock";
     allMessageBlock.append(correspondenceBlock);
     return correspondenceBlock;
   }
