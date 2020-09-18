@@ -1,4 +1,4 @@
-class LogInPart {
+class SignInPart {
   logInFormBuilder() {
     let loginFormContainer = document.getElementById("loginForm");
     let formLogIn = document.createElement("form");
@@ -13,7 +13,7 @@ class LogInPart {
     passwordField.placeholder = "password";
 
     let logInSendButton = document.createElement("input");
-    logInSendButton.value = "Log in";
+    logInSendButton.value = "Sign in";
     logInSendButton.className = "button";
     logInSendButton.onclick = this.formingDataForServer;
 

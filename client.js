@@ -7,7 +7,7 @@ ws.addEventListener("message", ({ data }) => {
   console.log(data);
 });
 
-const logInPart = new LogInPart();
+const logInPart = new SignInPart();
 logInPart.logInFormBuilder();
 
 const chatModule = new ChatModule();

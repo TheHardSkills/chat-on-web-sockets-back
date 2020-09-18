@@ -101,6 +101,7 @@ class MongoDbDataProcessing {
   }
 
   async getOneUserInfo(usernameSearchedUser) {
+    //usernameSearchedUser
     var connect = await this.MongoClient.connect(this.url, {
       useUnifiedTopology: true,
     });
@@ -115,6 +116,48 @@ class MongoDbDataProcessing {
         }
         return resolve(docs);
       });
+    });
+    // todo: close connection
+    const oneUserInfo = await result;
+    return oneUserInfo;
+  }
+
+  getUsersOnline() {}
+
+  async existingUserChecker(loggedInUserData) {
+    //return true/false 'user creator'
+    var connect = await this.MongoClient.connect(this.url, {
+      useUnifiedTopology: true,
+    });
+    const db = connect.db("chatbd_draft_version");
+    let result = new Promise(function (resolve, reject) {
+      db.collection("users").findOne(
+        { username: "Jkl" }, //todo: loggedInUserData.userName
+        function (err, docs) {
+          if (err) {
+            //создание такого юзера
+            this.userCreator(loggedInUserData);
+            return "User was created";
+          } else {
+            if (docs !== null) {
+              //сравнение пароля из формы с паролем в БД:
+              let enteredPassword = "asdasd"; // todo: loggedInUserData.password;
+              console.log("docs");
+              console.log(docs);
+              let databasePassword = docs.password;
+              if (enteredPassword === databasePassword) {
+                return true;
+                //на сервере реализовать вход в систему -
+                //отображение сообщений, связанных с этим пользователем
+              } else {
+                //
+                return false;
+              }
+              //return resolve(docs);
+            }
+          }
+        }
+      );
     });
     // todo: close connection
     const oneUserInfo = await result;
