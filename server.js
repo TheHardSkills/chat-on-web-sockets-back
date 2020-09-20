@@ -6,10 +6,14 @@ const cors = require("cors");
 
 //////start/
 var checkingIfSuchUserExists = async (userData) => {
+  console.log("userData***");
+  console.log(userData);
   //get true / false /'user creator' message
 
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   const oneUserData = await dataProcessing.existingUserChecker(userData);
+  console.log("oneUserData");
+  console.log(oneUserData);
   if (oneUserData === true) {
     // такой юзер есть - лог и пар совпадают
     // => отрендерить сообщения
@@ -52,26 +56,26 @@ app.post("/login", function (request, response) {
   };
 
   // todo: "userInfo" write to db + check enter data (validation)
-  //-const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
-  //-dataProcessing.userCreator(userInfo); // todo: .getUsersOnline()
-  checkingIfSuchUserExists();
+  //- const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+  //- dataProcessing.userCreator(userInfo); // todo: .getUsersOnline()
+  //--checkingIfSuchUserExists(userInfo);
 
   // todo: move to needed place
-  const findingSllUsersInDb = async () => {
+  const findingAllUsersInDb = async () => {
     const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
     const allUsersInChat = await dataProcessing.getAllUsers();
     // console.log("allUsersInChat");
     // console.log(allUsersInChat);
     return allUsersInChat;
   };
-  findingSllUsersInDb();
+  findingAllUsersInDb();
 
   // todo: move to needed place
   const findUser = async () => {
     const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
-    const oneUserData = await dataProcessing.getOneUserInfo("Some");
-    // console.log("oneUserData");
-    // console.log(oneUserData);
+    const oneUserData = await dataProcessing.getOneUserInfo("Julia");// todo: dynamic name
+    console.log("oneUserData");
+    console.log(oneUserData);
     return oneUserData;
   };
   findUser();

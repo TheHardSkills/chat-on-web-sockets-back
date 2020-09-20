@@ -8,7 +8,7 @@ class MongoDbDataProcessing {
     });
   }
 
-  dataBaseCreator() {}
+  dataBaseCreator() { }
   userCreator(data) {
     this.mongoClient.connect(function (err, client) {
       // "adminStatus" must be true or false
@@ -78,7 +78,7 @@ class MongoDbDataProcessing {
     return allMessages;
   }
 
-  activeUsersFounder() {}
+  activeUsersFounder() { }
   async getAllUsers() {
     var connect = await this.MongoClient.connect(this.url, {
       useUnifiedTopology: true,
@@ -107,7 +107,7 @@ class MongoDbDataProcessing {
     });
     const db = connect.db("chatbd_draft_version");
     let result = new Promise(function (resolve, reject) {
-      db.collection("users").findOne({ username: "Some" }, function (
+      db.collection("users").findOne({ username: usernameSearchedUser }, function (
         err,
         docs
       ) {
@@ -122,46 +122,32 @@ class MongoDbDataProcessing {
     return oneUserInfo;
   }
 
-  getUsersOnline() {}
+  getUsersOnline() { }
 
   async existingUserChecker(loggedInUserData) {
-    //return true/false 'user creator'
-    var connect = await this.MongoClient.connect(this.url, {
-      useUnifiedTopology: true,
-    });
-    const db = connect.db("chatbd_draft_version");
-    let result = new Promise(function (resolve, reject) {
-      db.collection("users").findOne(
-        { username: "Jkl" }, //todo: loggedInUserData.userName
-        function (err, docs) {
-          if (err) {
-            //создание такого юзера
-            this.userCreator(loggedInUserData);
-            return "User was created";
-          } else {
-            if (docs !== null) {
-              //сравнение пароля из формы с паролем в БД:
-              let enteredPassword = "asdasd"; // todo: loggedInUserData.password;
-              console.log("docs");
-              console.log(docs);
-              let databasePassword = docs.password;
-              if (enteredPassword === databasePassword) {
-                return true;
-                //на сервере реализовать вход в систему -
-                //отображение сообщений, связанных с этим пользователем
-              } else {
-                //
-                return false;
-              }
-              //return resolve(docs);
-            }
-          }
-        }
-      );
-    });
-    // todo: close connection
-    const oneUserInfo = await result;
-    return oneUserInfo;
+    console.log("AAAAAAAAAAAAAA");
+    console.log(loggedInUserData);
+
+    const loginResult = await this.getOneUserInfo(loggedInUserData.username);
+    let userAuthorizationInformation = { isAuthorized: false, error: "" };
+
+    if (loginResult !== null) {
+      if (loginResult.password === loggedInUserData.password) {
+        //login and display chat
+        loginResult.isAuthorized = true;
+
+      }
+      else {
+        userAuthorizationInformation.error = "The password was entered incorrectly, please try again.";
+      }
+    }
+    else {
+      //create new user
+      this.userCreator(loggedInUserData);
+      loginResult.isAuthorized = true;
+    }
+
+    return loginResult;
   }
 }
 
