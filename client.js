@@ -9,6 +9,7 @@ ws.addEventListener("message", ({ data }) => {
 
 const logInPart = new SignInPart();
 logInPart.logInFormBuilder();
+let currentUserName = "Dan";
 
-const chatModule = new ChatModule();
+const chatModule = new ChatModule(currentUserName);
 chatModule.messageFormBuilder(ws);

@@ -1,4 +1,7 @@
 class SignInPart {
+  constructor() {
+    this.currentUserId;
+  }
   logInFormBuilder() {
     let loginFormContainer = document.getElementById("loginForm");
     let formLogIn = document.createElement("form");
@@ -25,7 +28,7 @@ class SignInPart {
   async formingDataForServer() {
     let username = document.getElementById("usernameField").value;
     let password = document.getElementById("passwordField").value;
-    let userToken = ""; // todo: some tokenGenerator, mb '_id' field
+    let userToken = ""; // todo: some tokenGenerator
     let adminStatus = ""; // todo: input for reading adminStatus (true / false)
 
     const objectWithUserData = {
@@ -35,12 +38,20 @@ class SignInPart {
       adminStatus: adminStatus,
     };
 
-    await fetch("http://localhost:7000/login", {
+    // window.location.href = `/chat${userId}`
+
+    let response = await fetch("http://localhost:7000/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: JSON.stringify(objectWithUserData),
     });
+    let res = await response.json();
+    console.log(res);
+
+    this.currentUserId = res._id;
+    console.log("this.currentUserId");
+    console.log(this.currentUserId);
   }
 }

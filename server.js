@@ -5,16 +5,15 @@ const express = require("express");
 const cors = require("cors");
 
 //////start/
-var checkingIfSuchUserExists = async (userData) => {
-  console.log("userData***");
-  console.log(userData);
-  //get true / false /'user creator' message
-
+const checkingIfSuchUserExists = async (userData) => {
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   const oneUserData = await dataProcessing.existingUserChecker(userData);
-  console.log("oneUserData");
-  console.log(oneUserData);
+
+  // -console.log("oneUserData");
+  // -console.log(oneUserData);
+
   if (oneUserData === true) {
+    //oneUserData.loginResult.isAuthorized
     // такой юзер есть - лог и пар совпадают
     // => отрендерить сообщения
     console.log("chat demo");
@@ -31,6 +30,8 @@ var checkingIfSuchUserExists = async (userData) => {
 
     console.log("new user was create ");
   }
+
+  return oneUserData;
 };
 
 //////end/
@@ -39,14 +40,11 @@ const app = express();
 app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
-app.post("/login", function (request, response) {
+app.post("/login", async (request, response) => {
   //на "/login" пришли данные,
   //сервер проверяет есть ли такие данные - нет - создает (checking if such user exists)
 
   let userInfoObject = badFunctionForHandlingInvalidObject(request.body);
-
-  // console.log("userInfoObject");
-  // console.log(userInfoObject);
 
   let userInfo = {
     username: userInfoObject.username,
@@ -55,7 +53,12 @@ app.post("/login", function (request, response) {
     adminStatus: userInfoObject.adminStatus,
   };
 
-  checkingIfSuchUserExists(userInfo);
+  let checkingResult = await checkingIfSuchUserExists(userInfo);
+  console.log("checkingResult");
+  console.log(checkingResult);
+
+  response.send(checkingResult.currentUserInDb);
+
   // todo: "userInfo" write to db + check enter data (validation)
   //- const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   //- dataProcessing.userCreator(userInfo); // todo: .getUsersOnline()
@@ -65,23 +68,8 @@ app.post("/login", function (request, response) {
   const findingAllUsersInDb = async () => {
     const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
     const allUsersInChat = await dataProcessing.getAllUsers();
-    // console.log("allUsersInChat");
-    // console.log(allUsersInChat);
     return allUsersInChat;
   };
-  findingAllUsersInDb();
-
-  // todo: move to needed place
-  // const findUser = async () => {
-  //   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
-  //   const oneUserData = await dataProcessing.getOneUserInfo("Julia"); // todo: dynamic name
-  //   console.log("oneUserData");
-  //   console.log(oneUserData);
-  //   return oneUserData;
-  // };
-  // findUser();
-
-  // response.send("done");
 });
 
 app.listen(7000);

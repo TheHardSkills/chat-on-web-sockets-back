@@ -1,4 +1,7 @@
 class ChatModule {
+  constructor(currentUserName) {
+    this.currentUserName = currentUserName;
+  }
   messageFormBuilder(ws) {
     const mainConteiner = document.getElementById("mainConteiner");
     const form = document.createElement("form");
@@ -48,10 +51,12 @@ class ChatModule {
     const currentDate = new Date();
     const messageData = this.getData(currentDate);
 
+    console.log("this.currentUserName");
+    console.log(this.currentUserName);
     // todo: senderToken field must be dinamic
     let objectWithMessageInfo = {
       message: messageText,
-      senderToken: 1,
+      senderToken: this.currentUserName,
       departureTime: messageData,
     };
     return objectWithMessageInfo;

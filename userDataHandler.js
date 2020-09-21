@@ -18,6 +18,14 @@ class UserDataHandler {
       useUnifiedTopology: true,
     });
 
+    this.User.insertMany([
+      {
+        username: userInfo.username,
+        password: userInfo.password,
+        adminStatus: userInfo.adminStatus,
+      },
+    ]);
+
     const user = new this.User({
       username: userInfo.username,
       password: userInfo.password,
@@ -29,7 +37,7 @@ class UserDataHandler {
       mongoose.disconnect();
 
       if (err) return console.log(err);
-      console.log("Сохранен объект", user);
+      //console.log("Сохранен объект", user);
     });
   }
 }

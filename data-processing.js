@@ -1,6 +1,5 @@
 const userDataHandler = require("./userDataHandler");
 const messageDataHandler = require("./messageDataHandler");
-
 const userConstructor = new userDataHandler();
 const messageConstructor = new messageDataHandler();
 
@@ -92,9 +91,6 @@ class MongoDbDataProcessing {
   getUsersOnline() {}
 
   async existingUserChecker(loggedInUserData) {
-    console.log("AAAAAAAAAAAAAA");
-    console.log(loggedInUserData);
-
     const oneUserData = await this.getOneUserInfo(loggedInUserData.username);
     let loginResult = { isAuthorized: false, error: "" };
 
@@ -112,7 +108,14 @@ class MongoDbDataProcessing {
       loginResult.isAuthorized = true;
     }
 
-    return loginResult;
+    //получить инф о юзере, чтобы передать его в ответ ниже - в идеале эти значения ложны вохвращать методы создания объектов в бд
+
+    let currentUserInDb;
+    if (loginResult.isAuthorized === true) {
+      currentUserInDb = await this.getOneUserInfo(loggedInUserData.username);
+    }
+
+    return { loginResult: loginResult, currentUserInDb: currentUserInDb };
   }
 }
 
