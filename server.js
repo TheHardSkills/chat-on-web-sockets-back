@@ -55,6 +55,7 @@ app.post("/login", function (request, response) {
     adminStatus: userInfoObject.adminStatus,
   };
 
+  checkingIfSuchUserExists(userInfo);
   // todo: "userInfo" write to db + check enter data (validation)
   //- const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   //- dataProcessing.userCreator(userInfo); // todo: .getUsersOnline()
@@ -71,16 +72,16 @@ app.post("/login", function (request, response) {
   findingAllUsersInDb();
 
   // todo: move to needed place
-  const findUser = async () => {
-    const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
-    const oneUserData = await dataProcessing.getOneUserInfo("Julia");// todo: dynamic name
-    console.log("oneUserData");
-    console.log(oneUserData);
-    return oneUserData;
-  };
-  findUser();
+  // const findUser = async () => {
+  //   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+  //   const oneUserData = await dataProcessing.getOneUserInfo("Julia"); // todo: dynamic name
+  //   console.log("oneUserData");
+  //   console.log(oneUserData);
+  //   return oneUserData;
+  // };
+  // findUser();
 
-  response.send("done");
+  // response.send("done");
 });
 
 app.listen(7000);

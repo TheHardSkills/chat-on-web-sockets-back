@@ -1,3 +1,9 @@
+const userDataHandler = require("./userDataHandler");
+const messageDataHandler = require("./messageDataHandler");
+
+const userConstructor = new userDataHandler();
+const messageConstructor = new messageDataHandler();
+
 class MongoDbDataProcessing {
   constructor() {
     this.MongoClient = require("mongodb").MongoClient;
@@ -8,53 +14,14 @@ class MongoDbDataProcessing {
     });
   }
 
-  dataBaseCreator() { }
-  userCreator(data) {
-    this.mongoClient.connect(function (err, client) {
-      // "adminStatus" must be true or false
-      let userInfo = {
-        username: data.username,
-        password: data.password,
-        userToken: data.userToken,
-        adminStatus: data.adminStatus,
-      };
+  dataBaseCreator() {}
 
-      const db = client.db("chatbd_draft_version"); // todo: move to constructor
-      const collection = db.collection("users");
-
-      collection.insertOne(userInfo, function (err, result) {
-        if (err) {
-          return console.log(err);
-        }
-        console.log(result.ops);
-        client.close();
-      });
-    });
+  userCreator(userData) {
+    userConstructor.createUser(userData);
   }
 
-  messageCreator(objectWithMessageInfo) {
-    this.mongoClient.connect(function (err, client) {
-      let message = objectWithMessageInfo.message;
-      let senderToken = objectWithMessageInfo.senderToken;
-      let departureTime = objectWithMessageInfo.departureTime;
-
-      const db = client.db("chatbd_draft_version"); // todo: move to constructor
-      const collection = db.collection("messages");
-
-      let messageInfo = {
-        message: message,
-        senderToken: senderToken,
-        departureTime: departureTime,
-      };
-
-      collection.insertOne(messageInfo, function (err, result) {
-        if (err) {
-          return console.log(err);
-        }
-        console.log(result.ops);
-        client.close();
-      });
-    });
+  messageCreator(messageData) {
+    messageConstructor.createMessage(messageData);
   }
 
   async messagesFounder() {
@@ -78,7 +45,7 @@ class MongoDbDataProcessing {
     return allMessages;
   }
 
-  activeUsersFounder() { }
+  activeUsersFounder() {}
   async getAllUsers() {
     var connect = await this.MongoClient.connect(this.url, {
       useUnifiedTopology: true,
@@ -107,41 +74,39 @@ class MongoDbDataProcessing {
     });
     const db = connect.db("chatbd_draft_version");
     let result = new Promise(function (resolve, reject) {
-      db.collection("users").findOne({ username: usernameSearchedUser }, function (
-        err,
-        docs
-      ) {
-        if (err) {
-          return reject(err);
+      db.collection("users").findOne(
+        { username: usernameSearchedUser },
+        function (err, docs) {
+          if (err) {
+            return reject(err);
+          }
+          return resolve(docs);
         }
-        return resolve(docs);
-      });
+      );
     });
     // todo: close connection
     const oneUserInfo = await result;
     return oneUserInfo;
   }
 
-  getUsersOnline() { }
+  getUsersOnline() {}
 
   async existingUserChecker(loggedInUserData) {
     console.log("AAAAAAAAAAAAAA");
     console.log(loggedInUserData);
 
-    const loginResult = await this.getOneUserInfo(loggedInUserData.username);
-    let userAuthorizationInformation = { isAuthorized: false, error: "" };
+    const oneUserData = await this.getOneUserInfo(loggedInUserData.username);
+    let loginResult = { isAuthorized: false, error: "" };
 
-    if (loginResult !== null) {
-      if (loginResult.password === loggedInUserData.password) {
+    if (oneUserData !== null) {
+      if (oneUserData.password === loggedInUserData.password) {
         //login and display chat
         loginResult.isAuthorized = true;
-
+      } else {
+        loginResult.error =
+          "The password was entered incorrectly, please try again.";
       }
-      else {
-        userAuthorizationInformation.error = "The password was entered incorrectly, please try again.";
-      }
-    }
-    else {
+    } else {
       //create new user
       this.userCreator(loggedInUserData);
       loginResult.isAuthorized = true;
