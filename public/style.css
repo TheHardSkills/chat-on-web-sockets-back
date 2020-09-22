@@ -38,3 +38,28 @@ input.button {
   border-radius: 20px;
   padding-left: 40px;
 }
+
+.oneMessageBlock {
+  font-family: "Orbitron", sans-serif;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: #b39cb8;
+  width: 75%;
+  color: #202020;
+  border-radius: 20px;
+  padding-left: 40px;
+}
+
+.usernameBlock {
+  font-size: x-small;
+  margin-top: 10px;
+  font-weight: 800;
+  width: 30px;
+}
+.messageSendingTimeBlock {
+  font-size: xx-small;
+  margin-right: 10px;
+  font-weight: 800;
+  width: 30px;
+  margin-left: 80%;
+}

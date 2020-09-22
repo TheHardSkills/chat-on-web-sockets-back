@@ -71,9 +71,23 @@ app.post("/login", async (request, response) => {
     return allUsersInChat;
   };
 });
-app.get("/chat", function (request, response) {
-  // get all message from chat, send to client 4 display
-  response.sendFile("/chat-page.html", { root: "./public" }); //thml
+var path = require("path");
+app.get("/chat", async (request, response) => {
+  // get all message from server, send to client 4 display
+
+  //response.send("Alll" + allMessages);
+  //response.json(allMessages);
+  //response.sendFile("/chat-page.html", { root: "./public", allMessages:allMessages });
+
+  response.sendFile(path.join(__dirname, "/public/chat-page.html"));
+});
+app.get("/getAllMessage", async (request, response) => {
+  // get all message from server, send to client 4 display
+
+  const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+  const allMessages = await dataProcessing.messagesFounder();
+
+  response.send(allMessages);
 });
 
 app.listen(7000);

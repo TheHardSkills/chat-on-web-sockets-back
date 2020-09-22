@@ -43,8 +43,6 @@ class SignInPart {
       adminStatus: adminStatus,
     };
 
-    // window.location.href = `/chat${userId}`
-
     let response = await fetch("http://localhost:7000/login", {
       method: "POST",
       headers: {

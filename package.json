@@ -25,6 +25,7 @@
     "mongodb": "^3.6.2",
     "mongoose": "^5.10.6",
     "nodemon": "^2.0.4",
+    "path": "^0.12.7",
     "socket.io": "^2.3.0",
     "websocket": "^1.0.32",
     "ws": "^7.3.1"
