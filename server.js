@@ -1,5 +1,4 @@
 const mongoDbDataProcessing = require("./data-processing");
-const autorizationPart = require("./authorization-part");
 const WebSocket = require("ws");
 const express = require("express");
 const cors = require("cors");
@@ -38,6 +37,7 @@ const checkingIfSuchUserExists = async (userData) => {
 const app = express();
 
 app.use(cors());
+app.use(express.static("./public"));
 app.use(express.urlencoded({ extended: true }));
 
 app.post("/login", async (request, response) => {
@@ -71,6 +71,10 @@ app.post("/login", async (request, response) => {
     return allUsersInChat;
   };
 });
+app.get("/chat", function (request, response) {
+  // get all message from chat, send to client 4 display
+  response.sendFile("/chat-page.html", { root: "./public" }); //thml
+});
 
 app.listen(7000);
 
@@ -85,10 +89,6 @@ var badFunctionForHandlingInvalidObject = (obj) => {
  */
 
 const wss = new WebSocket.Server({ port: 5000 });
-
-//call class from authorization-part:
-const autorization = new autorizationPart();
-//autorization.writingUserDataToDb(data);
 
 const writingClientMessageToDb = (dataInString) => {
   const objectWithClientData = JSON.parse(dataInString);

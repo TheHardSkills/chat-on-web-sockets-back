@@ -7,9 +7,9 @@ ws.addEventListener("message", ({ data }) => {
   console.log(data);
 });
 
-const logInPart = new SignInPart();
-logInPart.logInFormBuilder();
-let currentUserName = "Dan";
+let currentUserName = localStorage.getItem("currentUserName");
+console.log("currentUserName");
+console.log(currentUserName);
 
 const chatModule = new ChatModule(currentUserName);
 chatModule.messageFormBuilder(ws);

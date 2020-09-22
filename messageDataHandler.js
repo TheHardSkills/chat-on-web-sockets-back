@@ -5,7 +5,7 @@ class MessageDataHandler {
     const Schema = mongoose.Schema;
     this.messageScheme = new Schema({
       message: String,
-      senderToken: String,
+      senderUsername: String,
       departureTime: String,
     });
     this.Message = mongoose.model("Message", this.messageScheme);
@@ -23,7 +23,7 @@ class MessageDataHandler {
     const message = new this.Message(messageInfo, {
       _id: false,
       message: messageInfo.message,
-      senderToken: messageInfo.senderToken,
+      senderUsername: messageInfo.senderUsername,
       departureTime: messageInfo.departureTime,
     });
 

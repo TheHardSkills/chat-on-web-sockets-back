@@ -1,7 +1,4 @@
 class SignInPart {
-  constructor() {
-    this.currentUserId;
-  }
   logInFormBuilder() {
     let loginFormContainer = document.getElementById("loginForm");
     let formLogIn = document.createElement("form");
@@ -18,18 +15,26 @@ class SignInPart {
     let logInSendButton = document.createElement("input");
     logInSendButton.value = "Sign in";
     logInSendButton.className = "button";
-    logInSendButton.onclick = this.formingDataForServer;
+    logInSendButton.onclick = async () => {
+      await this.formingDataForServer();
+
+      this.currentUsername = document.getElementById("usernameField").value;
+      localStorage.setItem("currentUserName", this.currentUsername);
+      document.location = "http://localhost:7000/chat";
+    };
 
     loginFormContainer.append(formLogIn);
     formLogIn.append(usernameField);
     formLogIn.append(passwordField);
     formLogIn.append(logInSendButton);
+
+    return this.currentUsername;
   }
   async formingDataForServer() {
     let username = document.getElementById("usernameField").value;
     let password = document.getElementById("passwordField").value;
-    let userToken = ""; // todo: some tokenGenerator
-    let adminStatus = ""; // todo: input for reading adminStatus (true / false)
+    let userToken = ""; // todo: delete
+    let adminStatus = ""; // todo: the fist user on db
 
     const objectWithUserData = {
       username: username,
@@ -49,9 +54,5 @@ class SignInPart {
     });
     let res = await response.json();
     console.log(res);
-
-    this.currentUserId = res._id;
-    console.log("this.currentUserId");
-    console.log(this.currentUserId);
   }
 }

@@ -51,12 +51,11 @@ class ChatModule {
     const currentDate = new Date();
     const messageData = this.getData(currentDate);
 
-    console.log("this.currentUserName");
+    console.log("this.currentUserName**");
     console.log(this.currentUserName);
-    // todo: senderToken field must be dinamic
     let objectWithMessageInfo = {
       message: messageText,
-      senderToken: this.currentUserName,
+      senderUsername: this.currentUserName,
       departureTime: messageData,
     };
     return objectWithMessageInfo;
