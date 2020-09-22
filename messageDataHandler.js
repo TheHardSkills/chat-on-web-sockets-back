@@ -17,7 +17,7 @@ class MessageDataHandler {
       useUnifiedTopology: true,
     });
 
-    console.log(messageInfo);
+    //-console.log(messageInfo);
     // todo: Sort out
     // Why should I write - "_id: false" ? If I don't write, an error occurs.
     const message = new this.Message(messageInfo, {

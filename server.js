@@ -3,37 +3,26 @@ const WebSocket = require("ws");
 const express = require("express");
 const cors = require("cors");
 
-//////start/
 const checkingIfSuchUserExists = async (userData) => {
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   const oneUserData = await dataProcessing.existingUserChecker(userData);
 
-  // -console.log("oneUserData");
-  // -console.log(oneUserData);
+  console.log("oneUserData");
+  console.log(oneUserData);
 
-  if (oneUserData === true) {
-    //oneUserData.loginResult.isAuthorized
-    // такой юзер есть - лог и пар совпадают
-    // => отрендерить сообщения
-    console.log("chat demo");
-  } else if (oneUserData === false) {
-    // ошибка, логин есть, а пароль не совпадает
-    // => вывести ошибку
-    console.log("error!");
+  if (oneUserData.loginResult.isAuthorized === true) {
+    console.log("Chat demo ...");
+  } else if (oneUserData.loginResult.isAuthorized === false) {
+    console.log(
+      "Error! This username already exists, or the password was entered incorrectly."
+    );
   } else {
-    // сообщение о том, что юзер создан - такого логина в базе нет
-    // => юзер записан в бд (мб это сделать тут, а не в data-processing)
-
-    // показать ему пустой чат, или всю переписку до него ?
-    // непринципиально = дать выбор юзеру - показать чат и или оставить его пустым до момента его появления в чате
-
-    console.log("new user was create ");
+    console.log(" New user was create ");
   }
 
   return oneUserData;
 };
 
-//////end/
 const app = express();
 
 app.use(cors());
@@ -49,13 +38,12 @@ app.post("/login", async (request, response) => {
   let userInfo = {
     username: userInfoObject.username,
     password: userInfoObject.password,
-    userToken: userInfoObject.userToken,
     adminStatus: userInfoObject.adminStatus,
   };
 
   let checkingResult = await checkingIfSuchUserExists(userInfo);
-  console.log("checkingResult");
-  console.log(checkingResult);
+  // -console.log("checkingResult");
+  // -console.log(checkingResult);
 
   response.send(checkingResult.currentUserInDb);
 
@@ -73,12 +61,7 @@ app.post("/login", async (request, response) => {
 });
 var path = require("path");
 app.get("/chat", async (request, response) => {
-  // get all message from server, send to client 4 display
-
-  //response.send("Alll" + allMessages);
-  //response.json(allMessages);
-  //response.sendFile("/chat-page.html", { root: "./public", allMessages:allMessages });
-
+  //response.sendFile("/chat-page.html", { root: "./public" });
   response.sendFile(path.join(__dirname, "/public/chat-page.html"));
 });
 app.get("/getAllMessage", async (request, response) => {

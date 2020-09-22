@@ -16,6 +16,7 @@ class MongoDbDataProcessing {
   dataBaseCreator() {}
 
   userCreator(userData) {
+    // console.log("CREATEEEE");
     userConstructor.createUser(userData);
   }
 

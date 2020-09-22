@@ -6,8 +6,18 @@ class UserDataHandler {
     this.userScheme = new Schema({
       username: String,
       password: String,
-      userToken: String,
-      adminStatus: String,
+      adminStatus: {
+        type: Boolean,
+        default: false,
+      },
+      onMute: {
+        type: Boolean,
+        default: false,
+      },
+      onBan: {
+        type: Boolean,
+        default: false,
+      },
     });
     this.User = mongoose.model("User", this.userScheme);
   }
@@ -18,22 +28,16 @@ class UserDataHandler {
       useUnifiedTopology: true,
     });
 
-    this.User.insertMany([
-      {
-        username: userInfo.username,
-        password: userInfo.password,
-        adminStatus: userInfo.adminStatus,
-      },
-    ]);
-
     const user = new this.User({
       username: userInfo.username,
       password: userInfo.password,
-      userToken: userInfo.userToken,
       adminStatus: userInfo.adminStatus,
+      onMute: userInfo.onMute,
+      onBan: userInfo.onBan,
     });
 
     user.save(function (err) {
+      console.log("CREATEEEE");
       mongoose.disconnect();
 
       if (err) return console.log(err);

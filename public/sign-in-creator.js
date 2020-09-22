@@ -33,14 +33,16 @@ class SignInPart {
   async formingDataForServer() {
     let username = document.getElementById("usernameField").value;
     let password = document.getElementById("passwordField").value;
-    let userToken = ""; // todo: delete
-    let adminStatus = ""; // todo: the fist user on db
+    let adminStatus = false; //dynamic - если в коллекции юзеров данных нет
+    let onMute = false; //dynamic
+    let onBan = false; //dynamic
 
     const objectWithUserData = {
       username: username,
       password: password,
-      userToken: userToken,
       adminStatus: adminStatus,
+      onMute: onMute,
+      onBan: onBan,
     };
 
     let response = await fetch("http://localhost:7000/login", {
