@@ -2,6 +2,7 @@ const mongoDbDataProcessing = require("./data-processing");
 const WebSocket = require("ws");
 const express = require("express");
 const cors = require("cors");
+const http = require("http");
 
 const checkingIfSuchUserExists = async (userData) => {
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
@@ -85,8 +86,6 @@ var badFunctionForHandlingInvalidObject = (obj) => {
  * WebSocket logic:
  */
 
-const wss = new WebSocket.Server({ port: 5000 });
-
 const writingClientMessageToDb = (dataInString) => {
   const objectWithClientData = JSON.parse(dataInString);
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
@@ -100,21 +99,22 @@ const findingClientMessageToDb = async () => {
   return allClientMessages;
 };
 
-wss.on("connection", (ws) => {
-  console.log("New client connected");
+const port = 5000;
+const server = http.createServer(express);
+const wss = new WebSocket.Server({ server });
 
-  ws.on("message", async (data) => {
-    console.log(`Client has sent us: ${data}`);
-    writingClientMessageToDb(data); //func with parse str and write to db
-    const allClientMessages = await findingClientMessageToDb(); // is a function needed for this primitive action?
-    // console.log("allClientMessages");
-    // console.log(allClientMessages);
-
-    ws.send(data); // data is sent to the client - addEventListener("message")
-    // todo: record to db + send to client (reading data from the database)
+wss.on("connection", function connection(ws) {
+  ws.on("message", async function incoming(data) {
+    writingClientMessageToDb(data);
+    await findingClientMessageToDb();
+    wss.clients.forEach(function each(client) {
+      if (client !== ws && client.readyState === WebSocket.OPEN) {
+        client.send(data);
+      }
+    });
   });
+});
 
-  ws.on("close", () => {
-    console.log("Client has disconnected");
-  });
+server.listen(port, function () {
+  console.log(`Server is listening on ${port}!`);
 });

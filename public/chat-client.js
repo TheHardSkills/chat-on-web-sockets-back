@@ -5,9 +5,12 @@ ws.addEventListener("open", () => {
 ws.addEventListener("message", ({ data }) => {
   console.log("dataaaaa");
   console.log(data);
+  let dataInObj = JSON.parse(data);
+  const chatModule = new ChatModule(currentUserName);
+  chatModule.buildingBlockWithMessagesNewLogic(dataInObj);
 });
 
-let currentUserName = localStorage.getItem("currentUserName");
+var currentUserName = localStorage.getItem("currentUserName");
 console.log("currentUserName");
 console.log(currentUserName);
 
