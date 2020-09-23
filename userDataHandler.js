@@ -6,6 +6,10 @@ class UserDataHandler {
     this.userScheme = new Schema({
       username: String,
       password: String,
+      isOnline: {
+        type: Boolean,
+        default: false,
+      },
       adminStatus: {
         type: Boolean,
         default: false,
@@ -22,7 +26,7 @@ class UserDataHandler {
     this.User = mongoose.model("User", this.userScheme);
   }
 
-  createUser(userInfo) {
+  async createUser(userInfo, isAdmin) {
     mongoose.connect("mongodb://localhost:27017/chatbd_draft_version", {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -30,8 +34,9 @@ class UserDataHandler {
 
     const user = new this.User({
       username: userInfo.username,
+      isOnline: userInfo.isOnline,
       password: userInfo.password,
-      adminStatus: userInfo.adminStatus,
+      adminStatus: isAdmin,
       onMute: userInfo.onMute,
       onBan: userInfo.onBan,
     });

@@ -43,17 +43,9 @@ app.post("/login", async (request, response) => {
   };
 
   let checkingResult = await checkingIfSuchUserExists(userInfo);
-  // -console.log("checkingResult");
-  // -console.log(checkingResult);
 
   response.send(checkingResult.currentUserInDb);
 
-  // todo: "userInfo" write to db + check enter data (validation)
-  //- const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
-  //- dataProcessing.userCreator(userInfo); // todo: .getUsersOnline()
-  //--checkingIfSuchUserExists(userInfo);
-
-  // todo: move to needed place
   const findingAllUsersInDb = async () => {
     const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
     const allUsersInChat = await dataProcessing.getAllUsers();
@@ -99,11 +91,19 @@ const findingClientMessageToDb = async () => {
   return allClientMessages;
 };
 
+const usernameParameterHandler = (usernameParameter) => {
+  let splitArr = usernameParameter.split("=");
+  return splitArr[1];
+};
+
 const port = 5000;
 const server = http.createServer(express);
 const wss = new WebSocket.Server({ server });
 
-wss.on("connection", function connection(ws) {
+wss.on("connection", function connection(ws, usernameParameter) {
+  const userName = usernameParameterHandler(usernameParameter.url);
+  console.log("*******connection**********");
+  console.log("Joined the chat:  ", userName);
   ws.on("message", async function incoming(data) {
     writingClientMessageToDb(data);
     await findingClientMessageToDb();

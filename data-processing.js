@@ -15,12 +15,37 @@ class MongoDbDataProcessing {
 
   dataBaseCreator() {}
 
+  async findOneUser() {
+    this.MongoClient = require("mongodb").MongoClient;
+    this.url = "mongodb://localhost:27017/";
+    this.mongoClient = new this.MongoClient(this.url, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+
+    var connect = await this.MongoClient.connect(this.url, {
+      useUnifiedTopology: true,
+    });
+    const db = connect.db("chatbd_draft_version");
+    let result = new Promise(function (resolve, reject) {
+      db.collection("users").findOne(function (err, docs) {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(docs);
+      });
+    });
+    const oneUserInfo = await result;
+    return oneUserInfo;
+  }
+
   async userCreator(userData) {
     let isAdmin = false;
-    let res = await this.findOneUser();
-    console.log(res);
-
-    userConstructor.createUser(userData);
+    let someUser = await this.findOneUser();
+    if (someUser == null) {
+      isAdmin = true;
+    }
+    userConstructor.createUser(userData, isAdmin);
   }
 
   messageCreator(messageData) {
@@ -68,22 +93,6 @@ class MongoDbDataProcessing {
     // todo: close connection
     const allUsers = await result;
     return allUsers;
-  }
-  async findOneUser() {
-    var connect = await this.MongoClient.connect(this.url, {
-      useUnifiedTopology: true,
-    });
-    const db = connect.db("chatbd_draft_version");
-    let result = new Promise(function (resolve, reject) {
-      db.collection("users").findOne(function (err, docs) {
-        if (err) {
-          return reject(err);
-        }
-        return resolve(docs);
-      });
-    });
-    const oneUserInfo = await result;
-    return oneUserInfo;
   }
 
   async getOneUserInfo(usernameSearchedUser) {

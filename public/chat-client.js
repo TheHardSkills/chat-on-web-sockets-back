@@ -1,4 +1,5 @@
-const ws = new WebSocket("ws://localhost:5000/");
+const currentUserName = localStorage.getItem("currentUserName");
+const ws = new WebSocket(`ws://localhost:5000/?user=${currentUserName}`);
 ws.addEventListener("open", () => {
   console.log("We are connected!");
 });
@@ -10,7 +11,6 @@ ws.addEventListener("message", ({ data }) => {
   chatModule.buildingBlockWithMessagesNewLogic(dataInObj);
 });
 
-var currentUserName = localStorage.getItem("currentUserName");
 console.log("currentUserName");
 console.log(currentUserName);
 
