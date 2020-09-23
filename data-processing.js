@@ -15,8 +15,11 @@ class MongoDbDataProcessing {
 
   dataBaseCreator() {}
 
-  userCreator(userData) {
-    // console.log("CREATEEEE");
+  async userCreator(userData) {
+    let isAdmin = false;
+    let res = await this.findOneUser();
+    console.log(res);
+
     userConstructor.createUser(userData);
   }
 
@@ -65,6 +68,22 @@ class MongoDbDataProcessing {
     // todo: close connection
     const allUsers = await result;
     return allUsers;
+  }
+  async findOneUser() {
+    var connect = await this.MongoClient.connect(this.url, {
+      useUnifiedTopology: true,
+    });
+    const db = connect.db("chatbd_draft_version");
+    let result = new Promise(function (resolve, reject) {
+      db.collection("users").findOne(function (err, docs) {
+        if (err) {
+          return reject(err);
+        }
+        return resolve(docs);
+      });
+    });
+    const oneUserInfo = await result;
+    return oneUserInfo;
   }
 
   async getOneUserInfo(usernameSearchedUser) {

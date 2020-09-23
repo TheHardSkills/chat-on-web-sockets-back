@@ -4,7 +4,11 @@ class MessageDataHandler {
   constructor() {
     const Schema = mongoose.Schema;
     this.messageScheme = new Schema({
-      message: String,
+      message: {
+        type: String,
+        required: true,
+        maxlength: 200,
+      },
       senderUsername: String,
       departureTime: String,
     });

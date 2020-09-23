@@ -93,16 +93,28 @@ class ChatModule {
     let messageFromClient = document.getElementById(
       "inputWithMessageFromClient"
     ).value;
-    const messageInfo = this.messageInformationGenerator(messageFromClient);
+    if (messageFromClient.length <= 200) {
+      let timeOfTheLastMessage = localStorage.getItem("timestamp");
+      let now = new Date();
+      let timestamp = now.getTime();
 
-    this.buildingBlockWithMessagesNewLogic(messageInfo);
-    console.log("messageInfo**");
-    console.log(messageInfo);
+      if (
+        Number(timeOfTheLastMessage) + 15000 <= timestamp ||
+        (timeOfTheLastMessage == null && timeOfTheLastMessage == undefined)
+      ) {
+        localStorage.setItem("timestamp", timestamp);
+        const messageInfo = this.messageInformationGenerator(messageFromClient);
 
-    // sending data to the server for writing to the db:
-    const messageInfoInString = JSON.stringify(messageInfo);
-    ws.send(messageInfoInString); //todo: process the object in the format required for sending to the server
-    //-- let correspondenceBlock = this.buildingBlockWithMessages();
-    //-- correspondenceBlock.innerText = messageFromClient;
+        this.buildingBlockWithMessagesNewLogic(messageInfo);
+
+        const messageInfoInString = JSON.stringify(messageInfo);
+        ws.send(messageInfoInString);
+        localStorage.setItem("currentUserName", this.currentUsername);
+      } else {
+        alert("You cannot send messages more than once every 15 seconds.");
+      }
+    } else {
+      alert("One message can contain up to 200 characters!");
+    }
   }
 }
