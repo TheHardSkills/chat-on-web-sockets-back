@@ -124,3 +124,11 @@ wss.on("connection", function connection(ws, usernameParameter) {
 server.listen(port, function () {
   console.log(`Server is listening on ${port}!`);
 });
+
+const whoOnline = async () => {
+  const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+  let onlineUsers = await dataProcessing.getUsersOnline();
+  console.log("onlineUsers===================");
+  console.log(onlineUsers);
+  console.log("onlineUsers===================e");
+};

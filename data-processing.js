@@ -126,7 +126,22 @@ class MongoDbDataProcessing {
     return oneUserInfo;
   }
 
-  getUsersOnline() {}
+  async getUsersOnline() {
+    var connect = await this.MongoClient.connect(this.url, {
+      useUnifiedTopology: true,
+    });
+    const db = connect.db("chatbd_draft_version");
+    const collection = db.collection("users");
+
+    let result = new Promise(function (resolve, reject) {
+      collection.find({ isOnline: true }).toArray(function (err, results) {
+        console.log(results);
+      });
+    });
+    // todo: close connection
+    const onlineUsers = await result;
+    return onlineUsers;
+  }
 
   async existingUserChecker(loggedInUserData) {
     const oneUserData = await this.getOneUserInfo(loggedInUserData.username);
