@@ -13,16 +13,26 @@ class MongoDbDataProcessing {
     });
   }
 
-  dataBaseCreator() {}
-
-  async findOneUser() {
-    this.MongoClient = require("mongodb").MongoClient;
-    this.url = "mongodb://localhost:27017/";
-    this.mongoClient = new this.MongoClient(this.url, {
-      useNewUrlParser: true,
+  async updateOneOfTheUser(username, newValue) {
+    var connect = await this.MongoClient.connect(this.url, {
       useUnifiedTopology: true,
     });
+    const db = connect.db("chatbd_draft_version");
+    let result = new Promise(function (resolve, reject) {
+      const col = db.collection("users");
+      col.findOneAndUpdate(
+        { username: username },
+        { $set: { isOnline: newValue } },
+        function (err, result) {
+          // console.log(result);
+        }
+      );
+    });
+    const oneUserInfo = await result;
+    return oneUserInfo;
+  }
 
+  async findOneUser() {
     var connect = await this.MongoClient.connect(this.url, {
       useUnifiedTopology: true,
     });
@@ -96,7 +106,6 @@ class MongoDbDataProcessing {
   }
 
   async getOneUserInfo(usernameSearchedUser) {
-    //usernameSearchedUser
     var connect = await this.MongoClient.connect(this.url, {
       useUnifiedTopology: true,
     });
@@ -125,25 +134,19 @@ class MongoDbDataProcessing {
 
     if (oneUserData !== null) {
       if (oneUserData.password === loggedInUserData.password) {
-        //login and display chat
         loginResult.isAuthorized = true;
       } else {
         loginResult.error =
           "The password was entered incorrectly, please try again.";
       }
     } else {
-      //create new user
       this.userCreator(loggedInUserData);
       loginResult.isAuthorized = true;
     }
-
-    //получить инф о юзере, чтобы передать его в ответ ниже - в идеале эти значения ложны вохвращать методы создания объектов в бд
-
     let currentUserInDb;
     if (loginResult.isAuthorized === true) {
       currentUserInDb = await this.getOneUserInfo(loggedInUserData.username);
     }
-
     return { loginResult: loginResult, currentUserInDb: currentUserInDb };
   }
 }

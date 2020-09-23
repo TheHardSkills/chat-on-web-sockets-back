@@ -8,9 +8,6 @@ const checkingIfSuchUserExists = async (userData) => {
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   const oneUserData = await dataProcessing.existingUserChecker(userData);
 
-  console.log("oneUserData");
-  console.log(oneUserData);
-
   if (oneUserData.loginResult.isAuthorized === true) {
     console.log("Chat demo ...");
   } else if (oneUserData.loginResult.isAuthorized === false) {
@@ -102,6 +99,10 @@ const wss = new WebSocket.Server({ server });
 
 wss.on("connection", function connection(ws, usernameParameter) {
   const userName = usernameParameterHandler(usernameParameter.url);
+
+  const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+  dataProcessing.updateOneOfTheUser(userName, true); //update admin status
+
   console.log("*******connection**********");
   console.log("Joined the chat:  ", userName);
   ws.on("message", async function incoming(data) {
