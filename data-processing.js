@@ -19,12 +19,14 @@ class MongoDbDataProcessing {
     });
     const db = connect.db("chatbd_draft_version");
     let result = new Promise(function (resolve, reject) {
-      const col = db.collection("users");
-      col.findOneAndUpdate(
+      db.collection("users").findOneAndUpdate(
         { username: username },
         { $set: { isOnline: newValue } },
         function (err, result) {
-          // console.log(result);
+          if (err) {
+            return reject(err);
+          }
+          return resolve(result);
         }
       );
     });
@@ -135,7 +137,10 @@ class MongoDbDataProcessing {
 
     let result = new Promise(function (resolve, reject) {
       collection.find({ isOnline: true }).toArray(function (err, results) {
-        console.log(results);
+        if (err) {
+          return reject(err);
+        }
+        return resolve(results);
       });
     });
     // todo: close connection

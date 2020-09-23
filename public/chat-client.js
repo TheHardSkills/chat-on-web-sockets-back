@@ -1,3 +1,8 @@
+const usernameParameterHandler = (usernameParameter) => {
+  let splitArr = usernameParameter.split("=");
+  return splitArr[1];
+};
+
 const currentUserName = localStorage.getItem("currentUserName");
 const ws = new WebSocket(`ws://localhost:5000/?user=${currentUserName}`);
 ws.addEventListener("open", () => {
@@ -9,6 +14,11 @@ ws.addEventListener("message", ({ data }) => {
   let dataInObj = JSON.parse(data);
   const chatModule = new ChatModule(currentUserName);
   chatModule.buildingBlockWithMessagesNewLogic(dataInObj);
+});
+ws.addEventListener("close", (event) => {
+  // let url = event.currentTarget.url;
+  // let username = usernameParameterHandler(url);
+  console.log(event, " disconnected!");
 });
 
 console.log("currentUserName");
@@ -36,3 +46,6 @@ messageBlockBuilder();
 
 const chatModule = new ChatModule(currentUserName);
 chatModule.messageFormBuilder(ws);
+
+const showUsersOnline = new ShowUsersOnline();
+showUsersOnline.buildingBlockWithOnlineUsers();

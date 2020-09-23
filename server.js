@@ -88,43 +88,6 @@ const findingClientMessageToDb = async () => {
   return allClientMessages;
 };
 
-const usernameParameterHandler = (usernameParameter) => {
-  let splitArr = usernameParameter.split("=");
-  return splitArr[1];
-};
-
-const port = 5000;
-const server = http.createServer(express);
-const wss = new WebSocket.Server({ server });
-
-wss.on("connection", function connection(ws, usernameParameter) {
-  const userName = usernameParameterHandler(usernameParameter.url);
-
-  const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
-  dataProcessing.updateOneOfTheUser(userName, true); //update admin status
-
-  console.log("*******connection**********");
-  console.log("Joined the chat:  ", userName);
-  ws.on("message", async function incoming(data) {
-    writingClientMessageToDb(data);
-    await findingClientMessageToDb();
-    wss.clients.forEach(function each(client) {
-      if (client !== ws && client.readyState === WebSocket.OPEN) {
-        client.send(data);
-      }
-    });
-  });
-  ws.on("close", function close() {
-    console.log("disconnected++++++++++++");
-    dataProcessing.updateOneOfTheUser(userName, false); //update admin status
-    console.log(userName, "left the chat");
-  });
-});
-
-server.listen(port, function () {
-  console.log(`Server is listening on ${port}!`);
-});
-
 const whoOnline = async () => {
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   let onlineUsers = await dataProcessing.getUsersOnline();
@@ -132,3 +95,47 @@ const whoOnline = async () => {
   console.log(onlineUsers);
   console.log("onlineUsers===================e");
 };
+// whoOnline(); // вызов блокирует изменение статуса на  "не в сети" ???
+
+const usernameParameterHandler = (usernameParameter) => {
+  let splitArr = usernameParameter.split("=");
+  return splitArr[1];
+};
+
+const port = 5000;
+const server = http.createServer(express);
+const socket = new WebSocket.Server({ server });
+
+socket.on("connection", function connection(connection, usernameParameter) {
+  const userName = usernameParameterHandler(usernameParameter.url);
+
+  const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+  dataProcessing.updateOneOfTheUser(userName, true); //update admin status
+
+  console.log("*******connection**********");
+  console.log("Joined the chat:  ", userName);
+  connection.on("message", async function incoming(data) {
+    writingClientMessageToDb(data);
+    await findingClientMessageToDb();
+    socket.clients.forEach(function each(client) {
+      if (client !== connection && client.readyState === WebSocket.OPEN) {
+        client.send(data);
+      }
+    });
+  });
+  connection.on("close", function close() {
+    console.log("disconnected++++++++++++");
+    dataProcessing.updateOneOfTheUser(userName, false); //update admin status
+    console.log(userName, "left the chat");
+    socket.clients.forEach(function each(client) {
+      if (client !== connection && client.readyState === WebSocket.OPEN) {
+        //let resUserName = usernameParameterHandler(userName.currentTarget);
+        client.send(userName);
+      }
+    });
+  });
+});
+
+server.listen(port, function () {
+  console.log(`Server is listening on ${port}!`);
+});

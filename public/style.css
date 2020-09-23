@@ -26,6 +26,8 @@ input.button {
   border: 1px solid green;
   padding-bottom: 10px;
   border-radius: 20px;
+  width: 60%;
+  display: inline-block;
 }
 
 .correspondenceBlock {
@@ -43,7 +45,9 @@ input.button {
   font-family: "Orbitron", sans-serif;
   padding: 10px;
   margin-top: 10px;
-  background-color: #b39cb8;
+  /* background-color: #b39cb8; */
+  background-color: #b0c4de;
+
   width: 75%;
   color: #202020;
   border-radius: 20px;
@@ -62,4 +66,16 @@ input.button {
   font-weight: 800;
   width: 30px;
   margin-left: 80%;
+}
+
+#onlineUsersBlock {
+  color: #b0c4de;
+  margin-top: 20px;
+  border: 1px solid orange;
+  border-radius: 20px;
+  width: 30%;
+  /* height: 30px; */
+  text-align: center;
+  display: inline-block;
+  float: right;
 }
