@@ -114,6 +114,11 @@ wss.on("connection", function connection(ws, usernameParameter) {
       }
     });
   });
+  ws.on("close", function close() {
+    console.log("disconnected++++++++++++");
+    dataProcessing.updateOneOfTheUser(userName, false); //update admin status
+    console.log(userName, "left the chat");
+  });
 });
 
 server.listen(port, function () {
