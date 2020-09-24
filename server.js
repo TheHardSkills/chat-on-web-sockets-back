@@ -130,14 +130,21 @@ socket.on("connection", async function connection(
 
   console.log("*******connection**********");
   console.log("Joined the chat:  ", userName);
+  let userInfo = await dataProcessing.getOneUserInfo(userName);
+  console.log("userInfo================", userInfo);
+
   connection.on("message", async function incoming(data) {
-    writingClientMessageToDb(data);
-    await findingClientMessageToDb();
-    socket.clients.forEach(function each(client) {
-      if (client !== connection && client.readyState === WebSocket.OPEN) {
-        client.send(data);
-      }
-    });
+    if (userInfo.onMute) {
+      return;
+    } else {
+      writingClientMessageToDb(data);
+      await findingClientMessageToDb();
+      socket.clients.forEach(function each(client) {
+        if (client !== connection && client.readyState === WebSocket.OPEN) {
+          client.send(data);
+        }
+      });
+    }
   });
 
   connection.on("close", async function incoming(data) {
