@@ -45,14 +45,12 @@ class SignInPart {
       onBan: onBan,
     };
 
-    let response = await fetch("http://localhost:7000/login", {
+    await fetch("http://localhost:7000/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: JSON.stringify(objectWithUserData),
     });
-    let res = await response.json();
-    console.log(res);
   }
 }

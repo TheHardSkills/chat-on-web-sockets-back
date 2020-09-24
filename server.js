@@ -91,11 +91,8 @@ const findingClientMessageToDb = async () => {
 const whoOnline = async () => {
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   let onlineUsers = await dataProcessing.getUsersOnline();
-  console.log("onlineUsers===================");
-  console.log(onlineUsers);
-  console.log("onlineUsers===================e");
+  return onlineUsers;
 };
-// whoOnline(); // вызов блокирует изменение статуса на  "не в сети" ???
 
 const usernameParameterHandler = (usernameParameter) => {
   let splitArr = usernameParameter.split("=");
@@ -106,11 +103,14 @@ const port = 5000;
 const server = http.createServer(express);
 const socket = new WebSocket.Server({ server });
 
-socket.on("connection", function connection(connection, usernameParameter) {
+socket.on("connection", async function connection(
+  connection,
+  usernameParameter
+) {
   const userName = usernameParameterHandler(usernameParameter.url);
 
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
-  dataProcessing.updateOneOfTheUser(userName, true); //update admin status
+  await dataProcessing.updateOneOfTheUser(userName, true); //update admin status
 
   console.log("*******connection**********");
   console.log("Joined the chat:  ", userName);
@@ -123,16 +123,47 @@ socket.on("connection", function connection(connection, usernameParameter) {
         client.send(data);
       }
     });
-  });  
-  
-  connection.on("close", function close() {
+  });
+
+  // connection.on("close", async function close() {
+  //   let onlineUsers = await whoOnline();
+  //   let onlineUsersArray = onlineUsers.map((oneObjectWithUserData) => {
+  //     return oneObjectWithUserData.username;
+  //   });
+
+  //   console.log("disconnected++++++++++++");
+  //   dataProcessing.updateOneOfTheUser(userName, false); //update admin status
+  //   console.log(userName, "left the chat");
+  //   socket.clients.forEach(function each(client) {
+  //     if (client !== connection && client.readyState === WebSocket.OPEN) {
+  //       //let resUserName = usernameParameterHandler(userName.currentTarget);
+  //       //let onloneUsers = whoOnline();
+  //       let onlineUsersInStr = onlineUsersArray.toString();
+  //       client.send(onlineUsersInStr);
+  //     }
+  //   });
+  // });
+
+  connection.on("close", async function incoming(data) {
+    console.log("STATUS:");
+    console.log(data);
+    await dataProcessing.updateOneOfTheUser(userName, false); //update admin status
+    console.log("after");
+
+    let onlineUsers = await whoOnline();
+    let onlineUsersArray = onlineUsers.map((oneObjectWithUserData) => {
+      return oneObjectWithUserData.username;
+    });
+
     console.log("disconnected++++++++++++");
-    dataProcessing.updateOneOfTheUser(userName, false); //update admin status
     console.log(userName, "left the chat");
     socket.clients.forEach(function each(client) {
       if (client !== connection && client.readyState === WebSocket.OPEN) {
         //let resUserName = usernameParameterHandler(userName.currentTarget);
-        client.send(userName);
+        //let onloneUsers = whoOnline();
+        // let onlineUsersInStr = onlineUsersArray.toString();
+        // client.send(onlineUsersInStr);
+        client.send(JSON.stringify(onlineUsersArray));
       }
     });
   });
