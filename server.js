@@ -121,6 +121,9 @@ socket.on("connection", async function connection(
   await dataProcessing.updateOneOfTheUser(userName, true); //update admin status
   //взять список тех кто оналйн, отправить на клиент и перерендерить там
 
+  let userInfo = await dataProcessing.getOneUserInfo(userName);
+  console.log("userInfo================", userInfo);
+
   let onlineUsers = await whoOnline();
   socket.clients.forEach(function each(client) {
     if (client !== connection && client.readyState === WebSocket.OPEN) {
@@ -130,8 +133,6 @@ socket.on("connection", async function connection(
 
   console.log("*******connection**********");
   console.log("Joined the chat:  ", userName);
-  let userInfo = await dataProcessing.getOneUserInfo(userName);
-  console.log("userInfo================", userInfo);
 
   connection.on("message", async function incoming(data) {
     if (userInfo.onMute) {
