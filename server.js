@@ -62,6 +62,14 @@ app.get("/getAllMessage", async (request, response) => {
 
   response.send(allMessages);
 });
+app.get("/getOnlineUsers", async (request, response) => {
+  // get all message from server, send to client 4 display
+
+  const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+  const onlineUsers = await dataProcessing.getUsersOnline();
+
+  response.send(onlineUsers);
+});
 
 app.listen(7000);
 
@@ -125,25 +133,6 @@ socket.on("connection", async function connection(
     });
   });
 
-  // connection.on("close", async function close() {
-  //   let onlineUsers = await whoOnline();
-  //   let onlineUsersArray = onlineUsers.map((oneObjectWithUserData) => {
-  //     return oneObjectWithUserData.username;
-  //   });
-
-  //   console.log("disconnected++++++++++++");
-  //   dataProcessing.updateOneOfTheUser(userName, false); //update admin status
-  //   console.log(userName, "left the chat");
-  //   socket.clients.forEach(function each(client) {
-  //     if (client !== connection && client.readyState === WebSocket.OPEN) {
-  //       //let resUserName = usernameParameterHandler(userName.currentTarget);
-  //       //let onloneUsers = whoOnline();
-  //       let onlineUsersInStr = onlineUsersArray.toString();
-  //       client.send(onlineUsersInStr);
-  //     }
-  //   });
-  // });
-
   connection.on("close", async function incoming(data) {
     console.log("STATUS:");
     console.log(data);
@@ -151,19 +140,12 @@ socket.on("connection", async function connection(
     console.log("after");
 
     let onlineUsers = await whoOnline();
-    let onlineUsersArray = onlineUsers.map((oneObjectWithUserData) => {
-      return oneObjectWithUserData.username;
-    });
 
     console.log("disconnected++++++++++++");
     console.log(userName, "left the chat");
     socket.clients.forEach(function each(client) {
       if (client !== connection && client.readyState === WebSocket.OPEN) {
-        //let resUserName = usernameParameterHandler(userName.currentTarget);
-        //let onloneUsers = whoOnline();
-        // let onlineUsersInStr = onlineUsersArray.toString();
-        // client.send(onlineUsersInStr);
-        client.send(JSON.stringify(onlineUsersArray));
+        client.send(JSON.stringify(onlineUsers));
       }
     });
   });

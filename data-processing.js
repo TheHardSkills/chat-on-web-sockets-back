@@ -145,7 +145,11 @@ class MongoDbDataProcessing {
     });
     // todo: close connection
     const onlineUsers = await result;
-    return onlineUsers;
+
+    let arrayWithOnlineUsersName = onlineUsers.map((onlineUser) => {
+      return onlineUser.username;
+    });
+    return arrayWithOnlineUsersName;
   }
 
   async existingUserChecker(loggedInUserData) {

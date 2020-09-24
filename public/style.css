@@ -79,3 +79,6 @@ input.button {
   display: inline-block;
   float: right;
 }
+ul {
+  text-align: left;
+}

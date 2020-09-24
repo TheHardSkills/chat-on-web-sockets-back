@@ -16,6 +16,9 @@ ws.addEventListener("message", ({ data }) => {
   } else {
     console.log("else");
     let arrayWithOnlineUserData = JSON.parse(data);
+
+    //вызвать ф-цию, которая отстраивает список из массива в блок с онлайн юзерами
+    showUsersOnline.onlineUsersListBuilder(arrayWithOnlineUserData);
   }
 });
 ws.addEventListener("close", (event) => {
@@ -31,6 +34,19 @@ const getAllMessagesFromServer = async () => {
   console.log(allMessages);
   return allMessages;
 };
+
+const getAllOnlineUsersFromServer = async () => {
+  let response = await fetch("http://localhost:7000/getOnlineUsers");
+  let onlineUsers = await response.json();
+  console.log(onlineUsers);
+  return onlineUsers;
+};
+
+const onlineUsersBlockBuilder = async () => {
+  const allOnlineUsers = await getAllOnlineUsersFromServer(); //<--------
+  showUsersOnline.onlineUsersListBuilder(allOnlineUsers);
+};
+onlineUsersBlockBuilder(); //не могу ожидать за асинхронной ф-цией
 
 const messageBlockBuilder = async () => {
   //build blocks with messages
@@ -48,5 +64,5 @@ messageBlockBuilder();
 const chatModule = new ChatModule(currentUserName);
 chatModule.messageFormBuilder(ws);
 
-const showUsersOnline = new ShowUsersOnline();
+var showUsersOnline = new ShowUsersOnline();
 showUsersOnline.buildingBlockWithOnlineUsers();
