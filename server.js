@@ -119,10 +119,12 @@ socket.on("connection", function connection(connection, usernameParameter) {
     await findingClientMessageToDb();
     socket.clients.forEach(function each(client) {
       if (client !== connection && client.readyState === WebSocket.OPEN) {
+        // const messageType = "usersMessages";
         client.send(data);
       }
     });
-  });
+  });  
+  
   connection.on("close", function close() {
     console.log("disconnected++++++++++++");
     dataProcessing.updateOneOfTheUser(userName, false); //update admin status

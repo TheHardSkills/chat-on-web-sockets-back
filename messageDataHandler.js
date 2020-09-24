@@ -35,7 +35,7 @@ class MessageDataHandler {
       mongoose.disconnect();
 
       if (err) return console.log(err);
-      console.log("Сохранен объект", message);
+      // console.log("Сохранен объект", message);
     });
   }
 }

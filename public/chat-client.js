@@ -8,12 +8,19 @@ const ws = new WebSocket(`ws://localhost:5000/?user=${currentUserName}`);
 ws.addEventListener("open", () => {
   console.log("We are connected!");
 });
-ws.addEventListener("message", ({ data }) => {
+ws.addEventListener("message", ({ data, messageType }) => {
   console.log("dataaaaa");
   console.log(data);
-  let dataInObj = JSON.parse(data);
-  const chatModule = new ChatModule(currentUserName);
-  chatModule.buildingBlockWithMessagesNewLogic(dataInObj);
+  let dataInObj = JSON.parse(data);  
+  if(dataInObj.message){
+    const chatModule = new ChatModule(currentUserName);
+    chatModule.buildingBlockWithMessagesNewLogic(dataInObj);
+  }
+  else{
+    let outUsername = data;
+    console.log(outUsername);
+    //запрос на список - мб на фронте перерисовка, а на беке в бд изменения
+  }
 });
 ws.addEventListener("close", (event) => {
   // let url = event.currentTarget.url;
