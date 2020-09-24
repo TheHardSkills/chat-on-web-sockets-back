@@ -119,6 +119,14 @@ socket.on("connection", async function connection(
 
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   await dataProcessing.updateOneOfTheUser(userName, true); //update admin status
+  //взять список тех кто оналйн, отправить на клиент и перерендерить там
+
+  let onlineUsers = await whoOnline();
+  socket.clients.forEach(function each(client) {
+    if (client !== connection && client.readyState === WebSocket.OPEN) {
+      client.send(JSON.stringify(onlineUsers));
+    }
+  });
 
   console.log("*******connection**********");
   console.log("Joined the chat:  ", userName);
@@ -127,7 +135,6 @@ socket.on("connection", async function connection(
     await findingClientMessageToDb();
     socket.clients.forEach(function each(client) {
       if (client !== connection && client.readyState === WebSocket.OPEN) {
-        // const messageType = "usersMessages";
         client.send(data);
       }
     });
