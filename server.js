@@ -124,6 +124,15 @@ socket.on("connection", async function connection(
   let userInfo = await dataProcessing.getOneUserInfo(userName);
   console.log("userInfo================", userInfo);
 
+  socket.clients.forEach(function each(client) {
+    console.log("3", client);
+    if (userInfo.onBan) {
+      //разрыв сокет - соединения
+      //client.close();
+      client.close();
+    }
+  });
+
   let onlineUsers = await whoOnline();
   socket.clients.forEach(function each(client) {
     if (client !== connection && client.readyState === WebSocket.OPEN) {
@@ -136,11 +145,14 @@ socket.on("connection", async function connection(
 
   connection.on("message", async function incoming(data) {
     if (userInfo.onMute) {
+      console.log("1");
       return;
     } else {
+      console.log("2");
       writingClientMessageToDb(data);
       await findingClientMessageToDb();
       socket.clients.forEach(function each(client) {
+        console.log("3", client);
         if (client !== connection && client.readyState === WebSocket.OPEN) {
           client.send(data);
         }
