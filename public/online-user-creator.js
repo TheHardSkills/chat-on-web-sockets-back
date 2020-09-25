@@ -22,7 +22,7 @@ class ShowUsersOnline {
     onlineUsers.map((onlineUser) => {
       let li = document.createElement("li");
       li.className = "listItem";
-      li.innerText = onlineUser.toUpperCase();
+      li.innerText = onlineUser; //.toUpperCase();
       ul.append(li);
       return li;
     });

@@ -127,7 +127,6 @@ socket.on("connection", async function connection(
   let currClient;
   socket.clients.forEach(function each(client) {
     currClient = client;
-    console.log("3");
     if (onlineUserInfo.onBan) {
       //разрыв сокет - соединения
       currClient.close();
@@ -156,7 +155,6 @@ socket.on("connection", async function connection(
     // console.log("DATA 4 ALL", onlineUsers);
     socket.clients.forEach(function each(client) {
       if (client !== connection && client.readyState === WebSocket.OPEN) {
-        console.log("SEND");
         client.send(JSON.stringify([...onlineUsers]));
       }
     });
@@ -166,25 +164,40 @@ socket.on("connection", async function connection(
   console.log("Joined the chat:  ", userName);
 
   connection.on("message", async function incoming(data) {
-    if (onlineUserInfo.onMute) {
-      console.log("1");
-      return;
-    } else {
-      console.log("2");
-      writingClientMessageToDb(data);
-      await findingClientMessageToDb();
-      socket.clients.forEach(function each(client) {
-        if (client !== connection && client.readyState === WebSocket.OPEN) {
-          client.send(data);
-        }
-      });
-    }
+    let dataFromAdmin = JSON.parse(data);
+    if (dataFromAdmin.command) {
+      //значит данные от админа = изменить состояния юзеров
+      if (dataFromAdmin.command === "onBan") {
+        await dataProcessing.updateOneOfTheUserForAdnin(
+          dataFromAdmin.username,
+          { onBan: true }
+        );
+      }
+      if (dataFromAdmin.command === "onMute") {
+        await dataProcessing.updateOneOfTheUserForAdnin(
+          dataFromAdmin.username,
+          { onMute: true }
+        );
+      }
+    } ////
+    else {
+      if (onlineUserInfo.onMute) {
+        return;
+      } else {
+        writingClientMessageToDb(data);
+        await findingClientMessageToDb();
+        socket.clients.forEach(function each(client) {
+          if (client !== connection && client.readyState === WebSocket.OPEN) {
+            client.send(data);
+          }
+        });
+      }
+    } ///
   });
 
   connection.on("close", async function incoming(data) {
     console.log("STATUS:", data);
     await dataProcessing.updateOneOfTheUser(userName, false); //update admin status
-    console.log("after");
 
     let onlineUsers = await whoOnline();
 

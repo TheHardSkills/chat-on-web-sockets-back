@@ -12,7 +12,7 @@ class AdminPanel {
     allUsersBlock.append(blockHeader);
     infoContainer.append(allUsersBlock);
   }
-  allUsersListBuilder(allUsers) {
+  allUsersListBuilder(allUsers, ws) {
     let allUsersList = document.getElementById("allUsersList");
     if (allUsersList) {
       allUsersList.remove();
@@ -23,12 +23,43 @@ class AdminPanel {
     allUsers.map((allUser) => {
       let li = document.createElement("li");
       li.className = "listItem";
-      li.innerText = allUser.toUpperCase();
+      li.innerText = allUser; //.toUpperCase();
+
+      let bttnContaineer = document.createElement("div");
+      bttnContaineer.id = "bttnContaineer";
+      let muteBttn = document.createElement("button");
+      muteBttn.innerText = "M";
+      muteBttn.id = "muteBttn";
+      muteBttn.onclick = () => {
+        let str = li.innerText;
+        let usnm = str.split("MB")[0];
+        usnm = usnm.replace(/\s/g, "");
+        this.banMuteUser("onMute", usnm, ws);
+      };
+      let banBttn = document.createElement("button");
+      banBttn.innerText = "B";
+      banBttn.id = "banBttn";
+      banBttn.onclick = () => {
+        let str = li.innerText;
+        let usnm = str.split("MB")[0];
+        usnm = usnm.replace(/\s/g, "");
+        this.banMuteUser("onBan", usnm, ws);
+        //вызов ф-ции, которая отправляет данные на сервер через сокет,
+        //на сервере меняются поля для нужного юзера и обновляются данные
+      };
+
       ul.append(li);
+      li.append(bttnContaineer);
+      bttnContaineer.append(muteBttn);
+      bttnContaineer.append(banBttn);
       return li;
     });
 
     let allUsersBlock = document.getElementById("allUsersBlock");
     allUsersBlock.append(ul);
+  }
+
+  banMuteUser(command, username, ws) {
+    ws.send(JSON.stringify({ command, username, ws }));
   }
 }

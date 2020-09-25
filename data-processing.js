@@ -18,21 +18,23 @@ class MongoDbDataProcessing {
       useUnifiedTopology: true,
     });
     const db = connect.db("chatbd_draft_version");
-    let result = await db.collection("users").findOneAndUpdate(
-      { username: username },
-      { $set: { isOnline: newValue } }
-      // function (err, result) {
-      //   if (err) {
-      //     return reject(err);
-      //   }
-      //   return resolve(result);
-      // }
-    );
-    // new Promise(function (resolve, reject) {
+    let result = await db
+      .collection("users")
+      .findOneAndUpdate(
+        { username: username },
+        { $set: { isOnline: newValue } }
+      );
+    return result;
+  }
 
-    // });
-    // const oneUserInfo = await result;
-    // return oneUserInfo;
+  async updateOneOfTheUserForAdnin(username, newKeyValue) {
+    var connect = await this.MongoClient.connect(this.url, {
+      useUnifiedTopology: true,
+    });
+    const db = connect.db("chatbd_draft_version");
+    let result = await db
+      .collection("users")
+      .findOneAndUpdate({ username: username }, { $set: newKeyValue });
     return result;
   }
 

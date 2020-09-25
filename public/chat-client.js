@@ -18,7 +18,7 @@ ws.addEventListener("message", ({ data }) => {
     //рендер юзеров всех с данными
     let adminPanel = new AdminPanel();
     adminPanel.createBlockWithAllUsers();
-    adminPanel.allUsersListBuilder(dataInObj.allUsers);
+    adminPanel.allUsersListBuilder(dataInObj.allUsers, ws);
   } else {
     if (dataInObj.message) {
       const chatModule = new ChatModule(currentUserName);
