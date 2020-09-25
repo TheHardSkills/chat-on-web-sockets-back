@@ -3,7 +3,7 @@ class ChatModule {
     this.currentUserName = currentUserName;
   }
   messageFormBuilder(ws) {
-    const mainConteiner = document.getElementById("mainConteiner");
+    const sendMessagePanel = document.getElementById("sendMessagePanel");
     const form = document.createElement("form");
     form.id = "formForMessageCreate";
     const inputWithMessageFromClient = document.createElement("input");
@@ -14,7 +14,7 @@ class ChatModule {
     sendButton.onclick = () => {
       this.sendDataFunc(ws);
     };
-    mainConteiner.append(form);
+    sendMessagePanel.append(form);
     form.append(inputWithMessageFromClient);
     form.append(sendButton);
   }

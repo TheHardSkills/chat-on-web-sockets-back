@@ -1,6 +1,6 @@
 class ShowUsersOnline {
   buildingBlockWithOnlineUsers() {
-    const mainConteiner = document.getElementById("mainConteiner");
+    const infoContainer = document.getElementById("infoContainer");
 
     const onlineUsersBlock = document.createElement("div");
     onlineUsersBlock.id = "onlineUsersBlock";
@@ -9,7 +9,7 @@ class ShowUsersOnline {
     blockHeader.innerText = "ONLINE USERS:";
 
     onlineUsersBlock.append(blockHeader);
-    mainConteiner.append(onlineUsersBlock);
+    infoContainer.append(onlineUsersBlock);
   }
   onlineUsersListBuilder(onlineUsers) {
     let onlineUsersList = document.getElementById("onlineUsersList");

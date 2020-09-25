@@ -3,7 +3,7 @@ class AdminPanel{
     }
     createBlockWithAllUsers(){
         
-    const mainConteiner = document.getElementById("mainConteiner");
+    const infoContainer = document.getElementById("infoContainer");
 
     const allUsersBlock = document.createElement("div");
     allUsersBlock.id = "allUsersBlock";
@@ -12,6 +12,6 @@ class AdminPanel{
     blockHeader.innerText = "ALL USERS:";
 
     allUsersBlock.append(blockHeader);
-    mainConteiner.append(allUsersBlock);
+    infoContainer.append(allUsersBlock);
     }
 }
