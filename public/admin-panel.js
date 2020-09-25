@@ -31,6 +31,7 @@ class AdminPanel {
       muteBttn.innerText = "M";
       muteBttn.id = "muteBttn";
       muteBttn.onclick = () => {
+        //muteBttn.innerText = "Unmte" //подгружать из бд из поля
         let str = li.innerText;
         let usnm = str.split("MB")[0];
         usnm = usnm.replace(/\s/g, "");

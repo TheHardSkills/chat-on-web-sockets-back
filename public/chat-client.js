@@ -10,12 +10,22 @@ ws.addEventListener("message", ({ data }) => {
   let dataInObj = JSON.parse(data);
   console.log("+++++++++++++++++++", dataInObj);
 
+  if (dataInObj.type === "ban") {
+    console.log("HERE");
+    console.log(currentUserName);
+    console.log(dataInObj.username);
+
+    if (dataInObj.username === currentUserName) {
+      console.log("i send close event");
+      ws.close();
+    }
+    return;
+  }
+
   if (dataInObj.allUsers) {
     //is admin !!!
-    //рендер юзеров онлайн с данными
     showUsersOnline.onlineUsersListBuilder(dataInObj.onlineUsers);
 
-    //рендер юзеров всех с данными
     let adminPanel = new AdminPanel();
     adminPanel.createBlockWithAllUsers();
     adminPanel.allUsersListBuilder(dataInObj.allUsers, ws);
@@ -32,8 +42,10 @@ ws.addEventListener("message", ({ data }) => {
     }
   }
 });
+
 ws.addEventListener("close", (event) => {
   console.log(event, " disconnected!");
+  window.location.href = "/";
 });
 
 console.log("currentUserName");

@@ -166,12 +166,17 @@ socket.on("connection", async function connection(
   connection.on("message", async function incoming(data) {
     let dataFromAdmin = JSON.parse(data);
     if (dataFromAdmin.command) {
-      //значит данные от админа = изменить состояния юзеров
       if (dataFromAdmin.command === "onBan") {
         await dataProcessing.updateOneOfTheUserForAdnin(
           dataFromAdmin.username,
           { onBan: true }
         );
+        console.log("HEREEEEEE");
+        socket.clients.forEach((client) => {
+          client.send(
+            JSON.stringify({ type: "ban", username: dataFromAdmin.username })
+          );
+        });
       }
       if (dataFromAdmin.command === "onMute") {
         await dataProcessing.updateOneOfTheUserForAdnin(
@@ -179,8 +184,7 @@ socket.on("connection", async function connection(
           { onMute: true }
         );
       }
-    } ////
-    else {
+    } else {
       if (onlineUserInfo.onMute) {
         return;
       } else {
@@ -197,6 +201,7 @@ socket.on("connection", async function connection(
 
   connection.on("close", async function incoming(data) {
     console.log("STATUS:", data);
+
     await dataProcessing.updateOneOfTheUser(userName, false); //update admin status
 
     let onlineUsers = await whoOnline();
