@@ -38,16 +38,8 @@ app.post("/login", async (request, response) => {
     password: userInfoObject.password,
     adminStatus: userInfoObject.adminStatus,
   };
-
   let checkingResult = await checkingIfSuchUserExists(userInfo);
-
   response.send(checkingResult.currentUserInDb);
-
-  const findingAllUsersInDb = async () => {
-    const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
-    const allUsersInChat = await dataProcessing.getAllUsers();
-    return allUsersInChat;
-  };
 });
 var path = require("path");
 app.get("/chat", async (request, response) => {
@@ -82,6 +74,14 @@ var badFunctionForHandlingInvalidObject = (obj) => {
 /*
  * WebSocket logic:
  */
+const findingAllUsersInDb = async () => {
+  const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
+  const allUsersInChat = await dataProcessing.getAllUsers();
+  let arrWithNameAllUsers = allUsersInChat.map(user => {
+    return user.username;
+  })
+  return arrWithNameAllUsers;
+};
 
 const writingClientMessageToDb = (dataInString) => {
   const objectWithClientData = JSON.parse(dataInString);
@@ -119,22 +119,29 @@ socket.on("connection", async function connection(
 
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   await dataProcessing.updateOneOfTheUser(userName, true); //update admin status
-  //взять список тех кто оналйн, отправить на клиент и перерендерить там
-
-  let userInfo = await dataProcessing.getOneUserInfo(userName);
+  let arrWithAllUsersName = await findingAllUsersInDb();
+  let onlineUserInfo = await dataProcessing.getOneUserInfo(userName);
   //console.log("userInfo================", userInfo);
 
-  let currClient ;
+
+  let currClient;
   socket.clients.forEach(function each(client) {
-    currClient=client;
+    currClient = client;
     console.log("3");
-    if (userInfo.onBan) {
+    if (onlineUserInfo.onBan) {
       //разрыв сокет - соединения
       currClient.close();
     }
   });
 
   let onlineUsers = await whoOnline();
+   //if admin - > в массив
+  if (onlineUserInfo.adminStatus) {
+    a = onlineUsers;
+    a.push(JSON.stringify(arrWithAllUsersName));
+    onlineUsers = a;
+
+  }
   socket.clients.forEach(function each(client) {
     if (client !== connection && client.readyState === WebSocket.OPEN) {
       client.send(JSON.stringify(onlineUsers));
@@ -145,7 +152,7 @@ socket.on("connection", async function connection(
   console.log("Joined the chat:  ", userName);
 
   connection.on("message", async function incoming(data) {
-    if (userInfo.onMute) {
+    if (onlineUserInfo.onMute) {
       console.log("1");
       return;
     } else {
