@@ -122,14 +122,15 @@ socket.on("connection", async function connection(
   //взять список тех кто оналйн, отправить на клиент и перерендерить там
 
   let userInfo = await dataProcessing.getOneUserInfo(userName);
-  console.log("userInfo================", userInfo);
+  //console.log("userInfo================", userInfo);
 
+  let currClient ;
   socket.clients.forEach(function each(client) {
-    console.log("3", client);
+    currClient=client;
+    console.log("3");
     if (userInfo.onBan) {
       //разрыв сокет - соединения
-      //client.close();
-      client.close();
+      currClient.close();
     }
   });
 
@@ -152,7 +153,6 @@ socket.on("connection", async function connection(
       writingClientMessageToDb(data);
       await findingClientMessageToDb();
       socket.clients.forEach(function each(client) {
-        console.log("3", client);
         if (client !== connection && client.readyState === WebSocket.OPEN) {
           client.send(data);
         }
@@ -161,8 +161,7 @@ socket.on("connection", async function connection(
   });
 
   connection.on("close", async function incoming(data) {
-    console.log("STATUS:");
-    console.log(data);
+    console.log("STATUS:", data);
     await dataProcessing.updateOneOfTheUser(userName, false); //update admin status
     console.log("after");
 

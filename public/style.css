@@ -82,3 +82,15 @@ input.button {
 ul {
   text-align: left;
 }
+
+#allUsersBlock{
+  color: #b0c4de;
+  margin-top: 20px;
+  border: 1px solid orange;
+  border-radius: 20px;
+  width: 30%;
+  /* height: 30px; */
+  text-align: center;
+  display: inline-block;
+  float: right;
+}
