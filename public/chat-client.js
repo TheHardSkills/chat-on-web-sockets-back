@@ -8,12 +8,12 @@ ws.addEventListener("message", ({ data }) => {
   console.log(data);
 
   let dataInObj = JSON.parse(data);
-  console.log("+++++++++++++++++++",dataInObj);
-  if(dataInObj.adminStatus){
-    //отстроить другие возможности 
-    console.log("Admin")
-  }
-  else if (dataInObj.message) {
+  console.log("+++++++++++++++++++", dataInObj);
+  // if(dataInObj.adminStatus){
+  //   //отстроить другие возможности
+  //   console.log("Admin")
+  // }
+  if (dataInObj.message) {
     const chatModule = new ChatModule(currentUserName);
     chatModule.buildingBlockWithMessagesNewLogic(dataInObj);
     console.log("if");

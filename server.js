@@ -14,6 +14,7 @@ const checkingIfSuchUserExists = async (userData) => {
     console.log(
       "Error! This username already exists, or the password was entered incorrectly."
     );
+    return;
   } else {
     console.log(" New user was create ");
   }
@@ -39,6 +40,7 @@ app.post("/login", async (request, response) => {
     adminStatus: userInfoObject.adminStatus,
   };
   let checkingResult = await checkingIfSuchUserExists(userInfo);
+  console.log("result---------", checkingResult);
   response.send(checkingResult.currentUserInDb);
 });
 var path = require("path");
@@ -77,9 +79,9 @@ var badFunctionForHandlingInvalidObject = (obj) => {
 const findingAllUsersInDb = async () => {
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   const allUsersInChat = await dataProcessing.getAllUsers();
-  let arrWithNameAllUsers = allUsersInChat.map(user => {
+  let arrWithNameAllUsers = allUsersInChat.map((user) => {
     return user.username;
-  })
+  });
   return arrWithNameAllUsers;
 };
 
@@ -123,7 +125,6 @@ socket.on("connection", async function connection(
   let onlineUserInfo = await dataProcessing.getOneUserInfo(userName);
   //console.log("userInfo================", userInfo);
 
-
   let currClient;
   socket.clients.forEach(function each(client) {
     currClient = client;
@@ -135,12 +136,11 @@ socket.on("connection", async function connection(
   });
 
   let onlineUsers = await whoOnline();
-   //if admin - > в массив
+  //if admin - > в массив
   if (onlineUserInfo.adminStatus) {
     a = onlineUsers;
     a.push(JSON.stringify(arrWithAllUsersName));
     onlineUsers = a;
-
   }
   socket.clients.forEach(function each(client) {
     if (client !== connection && client.readyState === WebSocket.OPEN) {

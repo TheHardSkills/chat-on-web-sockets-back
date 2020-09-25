@@ -4,7 +4,10 @@ class UserDataHandler {
   constructor() {
     const Schema = mongoose.Schema;
     this.userScheme = new Schema({
-      username: String,
+      username: {
+        type: String,
+        maxlength: 3,
+      },
       password: String,
       isOnline: {
         type: Boolean,
