@@ -6,7 +6,7 @@ class UserDataHandler {
     this.userScheme = new Schema({
       username: {
         type: String,
-        maxlength: 3,
+        minlength: 3,
       },
       password: String,
       isOnline: {

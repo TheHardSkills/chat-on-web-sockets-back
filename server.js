@@ -40,7 +40,6 @@ app.post("/login", async (request, response) => {
     adminStatus: userInfoObject.adminStatus,
   };
   let checkingResult = await checkingIfSuchUserExists(userInfo);
-  console.log("result---------", checkingResult);
   response.send(checkingResult.currentUserInDb);
 });
 var path = require("path");
@@ -121,7 +120,7 @@ socket.on("connection", async function connection(
 
   const dataProcessing = new mongoDbDataProcessing(); // todo: move to top (pass as parameter ?)
   await dataProcessing.updateOneOfTheUser(userName, true); //update admin status
-  let arrWithAllUsersName = await findingAllUsersInDb();
+  // let arrWithAllUsersName = await findingAllUsersInDb();
   let onlineUserInfo = await dataProcessing.getOneUserInfo(userName);
   //console.log("userInfo================", userInfo);
 
@@ -136,17 +135,32 @@ socket.on("connection", async function connection(
   });
 
   let onlineUsers = await whoOnline();
+
   //if admin - > в массив
   if (onlineUserInfo.adminStatus) {
-    a = onlineUsers;
-    a.push(JSON.stringify(arrWithAllUsersName));
-    onlineUsers = a;
+    let dataForAdmin = { onlineUsers: [...onlineUsers] };
+    console.log("ADMIN", await findingAllUsersInDb());
+    dataForAdmin.allUsers = await findingAllUsersInDb();
+    console.log("DATA 4 ADMIN", dataForAdmin);
+
+    socket.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        if (client === connection) {
+          client.send(JSON.stringify(dataForAdmin));
+        } else {
+          client.send(JSON.stringify([...onlineUsers]));
+        }
+      }
+    });
+  } else {
+    // console.log("DATA 4 ALL", onlineUsers);
+    socket.clients.forEach(function each(client) {
+      if (client !== connection && client.readyState === WebSocket.OPEN) {
+        console.log("SEND");
+        client.send(JSON.stringify([...onlineUsers]));
+      }
+    });
   }
-  socket.clients.forEach(function each(client) {
-    if (client !== connection && client.readyState === WebSocket.OPEN) {
-      client.send(JSON.stringify(onlineUsers));
-    }
-  });
 
   console.log("*******connection**********");
   console.log("Joined the chat:  ", userName);

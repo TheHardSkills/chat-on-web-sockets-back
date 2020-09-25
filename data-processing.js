@@ -18,20 +18,22 @@ class MongoDbDataProcessing {
       useUnifiedTopology: true,
     });
     const db = connect.db("chatbd_draft_version");
-    let result = new Promise(function (resolve, reject) {
-      db.collection("users").findOneAndUpdate(
-        { username: username },
-        { $set: { isOnline: newValue } },
-        function (err, result) {
-          if (err) {
-            return reject(err);
-          }
-          return resolve(result);
-        }
-      );
-    });
-    const oneUserInfo = await result;
-    return oneUserInfo;
+    let result = await db.collection("users").findOneAndUpdate(
+      { username: username },
+      { $set: { isOnline: newValue } }
+      // function (err, result) {
+      //   if (err) {
+      //     return reject(err);
+      //   }
+      //   return resolve(result);
+      // }
+    );
+    // new Promise(function (resolve, reject) {
+
+    // });
+    // const oneUserInfo = await result;
+    // return oneUserInfo;
+    return result;
   }
 
   async findOneUser() {

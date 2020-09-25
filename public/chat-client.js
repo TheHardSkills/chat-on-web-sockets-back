@@ -9,20 +9,27 @@ ws.addEventListener("message", ({ data }) => {
 
   let dataInObj = JSON.parse(data);
   console.log("+++++++++++++++++++", dataInObj);
-  // if(dataInObj.adminStatus){
-  //   //отстроить другие возможности
-  //   console.log("Admin")
-  // }
-  if (dataInObj.message) {
-    const chatModule = new ChatModule(currentUserName);
-    chatModule.buildingBlockWithMessagesNewLogic(dataInObj);
-    console.log("if");
-  } else {
-    console.log("else");
-    let arrayWithOnlineUserData = JSON.parse(data);
 
-    //вызвать ф-цию, которая отстраивает список из массива в блок с онлайн юзерами
-    showUsersOnline.onlineUsersListBuilder(arrayWithOnlineUserData);
+  if (dataInObj.allUsers) {
+    //is admin !!!
+    //рендер юзеров онлайн с данными
+    showUsersOnline.onlineUsersListBuilder(dataInObj.onlineUsers);
+
+    //рендер юзеров всех с данными
+    let adminPanel = new AdminPanel();
+    adminPanel.createBlockWithAllUsers();
+    adminPanel.allUsersListBuilder(dataInObj.allUsers);
+  } else {
+    if (dataInObj.message) {
+      const chatModule = new ChatModule(currentUserName);
+      chatModule.buildingBlockWithMessagesNewLogic(dataInObj);
+      console.log("if");
+    } else {
+      console.log("else");
+
+      //вызвать ф-цию, которая отстраивает список из массива в блок с онлайн юзерами
+      showUsersOnline.onlineUsersListBuilder(dataInObj);
+    }
   }
 });
 ws.addEventListener("close", (event) => {
